@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENETIGZ — Engineered Streetwear</title>
+<meta name="description" content="GENETIGZ — engineered fabric, coded silhouettes. Premium streetwear built to spec.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Styles -->
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ============================================
+     LOADING SCREEN
+============================================= -->
+<div id="loader" class="loader">
+  <div class="loader-inner">
+    <svg class="loader-mark" viewBox="0 0 120 120" aria-hidden="true">
+      <circle class="loader-ring" cx="60" cy="60" r="52"></circle>
+    </svg>
+    <div class="loader-word" aria-label="GENETIGZ">
+      <span style="--i:0">G</span><span style="--i:1">E</span><span style="--i:2">N</span><span style="--i:3">E</span><span style="--i:4">T</span><span style="--i:5">I</span><span style="--i:6">G</span><span style="--i:7">Z</span>
+    </div>
+    <div class="loader-sub">SEQ. 001 / STREETWEAR ENGINEERED</div>
+  </div>
+</div>
+
+<!-- ============================================
+     LEFT SIDEBAR — CATEGORY NAV
+============================================= -->
+<nav id="sidebar" class="sidebar" aria-label="Product categories">
+  <div class="sidebar-top">
+    <span class="sidebar-logo">GZ</span>
+  </div>
+
+  <ul class="sidebar-list">
+    <li><button class="sidebar-link active" data-category="tshirt"><span class="sb-code">01</span><span class="sb-label">T&#8209;Shirt</span></button></li>
+    <li><button class="sidebar-link" data-category="polo"><span class="sb-code">02</span><span class="sb-label">Polo</span></button></li>
+    <li><button class="sidebar-link" data-category="baggy"><span class="sb-code">03</span><span class="sb-label">Baggy Tee</span></button></li>
+    <li><button class="sidebar-link" data-category="tanktop"><span class="sb-code">04</span><span class="sb-label">Tank Top</span></button></li>
+  </ul>
+
+  <div class="sidebar-bottom">
+    <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
+       class="sidebar-customize" target="_blank" rel="noopener">
+      <span>Customize</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- Mobile nav toggle -->
+<button id="navToggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- ============================================
+     TOP BAR
+============================================= -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="brand">GENETIGZ<span class="brand-dot">.</span></a>
+    <div class="topbar-tag">ENGINEERED STREETWEAR — BATCH 01</div>
+    <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
+       class="btn-customize" target="_blank" rel="noopener">
+      Customize
+    </a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================
+       HERO — FEATURED PRODUCT
+  ============================================= -->
+  <section class="hero" id="hero">
+    <div class="hero-grid">
+
+      <div class="hero-copy">
+        <p class="eyebrow">FEATURED SPECIMEN — FW26</p>
+        <h1 class="hero-title">Fabric is<br>the format.</h1>
+        <p class="hero-desc">
+          Every Genetigz piece begins as a spec sheet before it becomes a garment.
+          240GSM heavyweight cotton, reinforced stitch lines, and a fit engineered
+          for how streetwear actually moves. No filler, no shortcuts — just
+          material discipline.
+        </p>
+        <div class="hero-actions">
+          <a href="#collection" class="btn-primary" data-scroll="#collection">View Collection</a>
+          <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
+             class="btn-ghost" target="_blank" rel="noopener">Customize on WhatsApp</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-image ph-image" data-src="images/hero/hero-main.jpg" data-label="HERO — FRONT">
+          <span class="ph-tag">IMG // PENDING UPLOAD</span>
+        </div>
+
+        <!-- Technical spec annotations -->
+        <div class="spec-callout spec-01">
+          <span class="spec-dot"></span>
+          <span class="spec-text"><b>FABRIC</b> 240GSM COMBED COTTON</span>
+        </div>
+        <div class="spec-callout spec-02">
+          <span class="spec-dot"></span>
+          <span class="spec-text"><b>FIT</b> OVERSIZED / DROPPED SHOULDER</span>
+        </div>
+        <div class="spec-callout spec-03">
+          <span class="spec-dot"></span>
+          <span class="spec-text"><b>STITCH</b> DOUBLE-NEEDLE REINFORCED</span>
+        </div>
+        <div class="spec-callout spec-04">
+          <span class="spec-dot"></span>
+          <span class="spec-text"><b>CODE</b> GZ-TS-001</span>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="scroll-cue" id="scrollCue" aria-label="Scroll to collection">
+      <span>SCROLL</span>
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
+    </button>
+  </section>
+
+  <!-- ============================================
+       QUALITY / MANIFESTO
+  ============================================= -->
+  <section class="quality">
+    <div class="quality-inner">
+      <p class="eyebrow">MATERIAL SPEC</p>
+      <h2 class="quality-title">Built like it matters, because it does.</h2>
+      <div class="quality-grid">
+        <div class="quality-item">
+          <span class="quality-num">GSM</span>
+          <p>Heavyweight 220–240GSM cotton bases across the line — structured drape, no transparency, no pilling.</p>
+        </div>
+        <div class="quality-item">
+          <span class="quality-num">SIL</span>
+          <p>Every silhouette is pattern-tested across three fits before it's approved for production.</p>
+        </div>
+        <div class="quality-item">
+          <span class="quality-num">PRT</span>
+          <p>High-density prints and embroidery, positioned to survive 50+ washes without cracking or fading.</p>
+        </div>
+        <div class="quality-item">
+          <span class="quality-num">FIN</span>
+          <p>Reinforced collars, taped seams, and finishing details you'd expect from a house built on process.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       REVIEWS — AUTO SCROLL CAROUSEL
+  ============================================= -->
+  <section class="reviews">
+    <p class="eyebrow center">FIELD REPORTS</p>
+    <h2 class="reviews-title">What the batch says back.</h2>
+
+    <div class="reviews-track-wrap">
+      <div class="reviews-track" id="reviewsTrack">
+        <!-- Reviews are duplicated via JS for seamless loop -->
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"The fabric weight is unreal for the price. Feels like a brand three times the size."</p>
+          <span class="review-author">— Arjun R., Kolkata</span>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Ordered a custom piece over WhatsApp and it fit exactly to spec. Zero complaints."</p>
+          <span class="review-author">— Meher S., Bengaluru</span>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">"Print didn't crack after months of wear. That's the real test and it passed."</p>
+          <span class="review-author">— Ishaan V., Pune</span>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"The oversized fit is exactly what the size chart promised. Rare these days."</p>
+          <span class="review-author">— Zara K., Delhi</span>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">"Genetigz feels engineered, not just designed. You can tell in how it sits."</p>
+          <span class="review-author">— Rohan D., Mumbai</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PRODUCT COLLECTION
+  ============================================= -->
+  <section class="collection" id="collection">
+    <div class="collection-head">
+      <p class="eyebrow">CATALOG</p>
+      <h2 class="collection-title" id="collectionTitle">T-Shirts</h2>
+      <p class="collection-sub" id="collectionSub">04 silhouettes currently in rotation.</p>
+    </div>
+
+    <!-- Category tabs (mirrors sidebar for mobile / in-flow access) -->
+    <div class="collection-tabs" role="tablist" aria-label="Product categories">
+      <button class="tab active" data-category="tshirt">T-Shirt</button>
+      <button class="tab" data-category="polo">Polo</button>
+      <button class="tab" data-category="baggy">Baggy Tee</button>
+      <button class="tab" data-category="tanktop">Tank Top</button>
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <!-- Product cards injected by js/products.js -->
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+  ============================================= -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="brand">GENETIGZ<span class="brand-dot">.</span></span>
+        <p>Engineered streetwear.<br>Designed, tested, and shipped from India.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Catalog</h4>
+        <button data-category="tshirt">T-Shirt</button>
+        <button data-category="polo">Polo</button>
+        <button data-category="baggy">Baggy Tee</button>
+        <button data-category="tanktop">Tank Top</button>
+      </div>
+      <div class="footer-col">
+        <h4>Order</h4>
+        <a href="https://wa.me/918145532620" target="_blank" rel="noopener">WhatsApp — +91 81455 32620</a>
+        <a href="#top" data-scroll="#top">Back to top</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> GENETIGZ. All rights reserved.</span>
+      <span class="footer-code">GZ // FW26 // ALL SYSTEMS NOMINAL</span>
+    </div>
+  </footer>
+
+</main>
+
+<!-- ============================================
+     PRODUCT MODAL
+============================================= -->
+<div id="productModal" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalProductName">
+    <button class="modal-close" id="modalClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+
+    <div class="modal-body">
+
+      <div class="modal-visuals">
+        <div class="modal-image-wrap">
+          <div class="modal-image ph-image" id="modalFrontImage" data-label="FRONT VIEW">
+            <span class="ph-tag">FRONT — IMG PENDING</span>
+          </div>
+          <span class="modal-view-label">FRONT</span>
+        </div>
+        <div class="modal-image-wrap">
+          <div class="modal-image ph-image" id="modalBackImage" data-label="BACK VIEW">
+            <span class="ph-tag">BACK — IMG PENDING</span>
+          </div>
+          <span class="modal-view-label">BACK</span>
+        </div>
+      </div>
+
+      <div class="modal-info">
+        <p class="modal-code" id="modalCode">GZ-000</p>
+        <h3 class="modal-name" id="modalProductName">Product Name</h3>
+
+        <dl class="modal-specs">
+          <div class="spec-row">
+            <dt>Fabric</dt>
+            <dd id="modalFabric">—</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Available Sizes</dt>
+            <dd id="modalSizes">—</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Available Colors</dt>
+            <dd id="modalColors">—</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Print Area</dt>
+            <dd id="modalPrintArea">—</dd>
+          </div>
+          <div class="spec-row">
+            <dt>Notes</dt>
+            <dd id="modalNotes">—</dd>
+          </div>
+        </dl>
+
+        <a href="#" id="modalWhatsapp" class="btn-primary btn-whatsapp" target="_blank" rel="noopener">
+          Order on WhatsApp
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/products.js"></script>
+<script src="js/modal.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
