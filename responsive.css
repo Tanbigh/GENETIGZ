@@ -80,3 +80,99 @@
   .loader-plate{ width: min(64vw, 240px); }
   .loader-progress{ width: min(56vw, 200px); }
 }
+/* ==============================================================
+   REVIEWS SECTION — MOBILE RESPONSIVE FIXES
+   Scoped to small viewports only (≤640px, with a tighter tier for
+   ≤380px). Desktop layout (fixed 320px cards, marquee speed, etc.)
+   in style.css is untouched — these rules only ever apply below
+   the breakpoint and override via cascade, not by editing the
+   original selectors.
+============================================================== */
+
+@media (max-width: 640px) {
+
+  .reviews{
+    padding: 64px 0 72px;
+    overflow: hidden; /* extra guard against any stray horizontal scroll */
+  }
+
+  .reviews .eyebrow.center{
+    padding: 0 20px;
+    text-align: center;
+  }
+
+  .reviews-title{
+    padding: 0 20px;
+    font-size: clamp(1.5rem, 7vw, 2.1rem);
+    line-height: 1.2;
+    margin: 0 0 36px;
+  }
+
+  .reviews-track-wrap{
+    width: 100%;
+    /* tighter mask fade so cards aren't clipped too aggressively on narrow screens */
+    mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+  }
+
+  .reviews-track{
+    gap: 16px;
+    /* proportionally faster since cards are narrower than desktop's 320px */
+    animation-duration: 26s;
+  }
+
+  .review-card{
+    width: 78vw;
+    max-width: 300px;
+    flex-shrink: 0;
+    padding: 22px 20px;
+    box-sizing: border-box;
+  }
+
+  .review-stars{
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .review-text{
+    font-size: 14.5px;
+    line-height: 1.55;
+    margin: 0 0 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .review-author{
+    font-size: 10px;
+    letter-spacing: .04em;
+    white-space: normal;
+  }
+}
+
+/* Extra-small phones (iPhone SE / small Android, ~320–380px) */
+@media (max-width: 380px) {
+
+  .reviews{
+    padding: 52px 0 60px;
+  }
+
+  .reviews-title{
+    font-size: 1.5rem;
+    margin: 0 0 28px;
+  }
+
+  .reviews-track{
+    gap: 12px;
+    animation-duration: 22s;
+  }
+
+  .review-card{
+    width: 84vw;
+    padding: 18px 16px;
+  }
+
+  .review-text{
+    font-size: 14px;
+  }
+}
