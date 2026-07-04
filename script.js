@@ -1,7 +1,8 @@
 /* ==============================================================
    GENETIGZ — CORE SCRIPT
    Handles: loader, mobile sidebar, smooth scroll, reveal animations,
-   review carousel duplication, placeholder image hydration, footer year.
+   review carousel duplication, PROGRESSIVE (lazy) placeholder image
+   hydration, footer year, service worker registration + install prompt.
    Product rendering + modal logic live in js/products.js and js/modal.js.
 ============================================================== */
 
@@ -145,6 +146,7 @@
     var revealTargets = [];
     revealSelectors.forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (el) {
+        if (el.classList.contains('reveal')) return; // already tagged, avoid re-observing
         el.classList.add('reveal');
         revealTargets.push(el);
       });
@@ -199,35 +201,88 @@
   }
 
   /* ============================================
-     7. PLACEHOLDER IMAGE HYDRATION
+     7. PROGRESSIVE (LAZY) PLACEHOLDER IMAGE
+        HYDRATION
      Any element with class "ph-image" and a
-     "data-src" attribute gets checked — if a real
-     file exists at that path, it's swapped in via
-     the --img CSS variable and .is-loaded is added.
-     If not found, the placeholder styling stays.
+     "data-src" attribute is only resolved once it's
+     about to enter the viewport (IntersectionObserver,
+     generous rootMargin so it's ready just before the
+     user scrolls to it) — this is what makes images
+     load progressively instead of all at once on
+     page load.
+
+     Elements marked [data-eager="true"] (the hero, or
+     anything already visible above the fold) skip the
+     viewport gate and resolve immediately, since
+     waiting for those would just delay the first paint
+     of content the user already sees.
+
+     If a real file exists at data-src, it's swapped in
+     via the --img CSS variable and .is-loaded is added
+     (triggering the crossfade in CSS). If not found,
+     the placeholder styling stays as-is.
   ============================================= */
+  var lazyImageObserver = null;
+
+  function resolvePlaceholder(el) {
+    var src = el.getAttribute('data-src');
+    if (!src || el.dataset.hydrated === 'true' || el.dataset.hydrated === 'pending') return;
+
+    el.dataset.hydrated = 'pending';
+    el.classList.add('is-loading');
+
+    var probe = new Image();
+
+    probe.onload = function () {
+      el.style.setProperty('--img', 'url("' + src + '")');
+      el.classList.remove('is-loading');
+      el.classList.add('is-loaded');
+      el.dataset.hydrated = 'true';
+    };
+
+    probe.onerror = function () {
+      // No real file yet — keep placeholder as-is.
+      el.classList.remove('is-loading');
+      el.dataset.hydrated = 'false';
+    };
+
+    probe.src = src;
+  }
+
+  function getLazyImageObserver() {
+    if (lazyImageObserver || !('IntersectionObserver' in window)) return lazyImageObserver;
+
+    lazyImageObserver = new IntersectionObserver(
+      function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            resolvePlaceholder(entry.target);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '300px 0px', threshold: 0.01 } // start loading well before it's on-screen
+    );
+
+    return lazyImageObserver;
+  }
+
   function hydratePlaceholders(root) {
     var scope = root || document;
     var placeholders = scope.querySelectorAll('.ph-image[data-src]');
 
     placeholders.forEach(function (el) {
-      var src = el.getAttribute('data-src');
-      if (!src || el.dataset.hydrated === 'true') return;
+      if (el.dataset.hydrated === 'true' || el.dataset.hydrated === 'pending') return;
 
-      var probe = new Image();
+      var isEager = el.getAttribute('data-eager') === 'true';
+      var observer = getLazyImageObserver();
 
-      probe.onload = function () {
-        el.style.setProperty('--img', 'url("' + src + '")');
-        el.classList.add('is-loaded');
-        el.dataset.hydrated = 'true';
-      };
-
-      probe.onerror = function () {
-        // No real file yet — keep placeholder as-is.
-        el.dataset.hydrated = 'false';
-      };
-
-      probe.src = src;
+      if (isEager || !observer) {
+        // Above-the-fold content, or no IO support — resolve right away.
+        resolvePlaceholder(el);
+      } else {
+        observer.observe(el);
+      }
     });
   }
 
@@ -241,12 +296,123 @@
   }
 
   /* ============================================
+     9. SERVICE WORKER REGISTRATION (PWA)
+     Registers service-worker.js so the app shell and
+     progressively-loaded images are cached for repeat
+     visits and offline use. Silently no-ops on
+     unsupported browsers or file:// contexts.
+  ============================================= */
+  function initServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol === 'file:') return; // SW requires http(s)
+
+    window.addEventListener('load', function () {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then(function (registration) {
+          // Watch for an updated worker taking over and offer a refresh.
+          registration.addEventListener('updatefound', function () {
+            var newWorker = registration.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', function () {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdateToast(registration);
+              }
+            });
+          });
+        })
+        .catch(function () {
+          // Offline support degrades gracefully; site still works online.
+        });
+    });
+  }
+
+  function showUpdateToast(registration) {
+    var toast = buildToast(
+      'A new version of GENETIGZ is ready.',
+      'Refresh',
+      function () {
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        window.location.reload();
+      }
+    );
+    document.body.appendChild(toast);
+    requestAnimationFrame(function () {
+      toast.classList.add('is-visible');
+    });
+  }
+
+  /* ============================================
+     10. "ADD TO HOME SCREEN" INSTALL PROMPT
+  ============================================= */
+  function initInstallPrompt() {
+    var deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      deferredPrompt = e;
+
+      var toast = buildToast(
+        'Install GENETIGZ for faster, offline-ready browsing.',
+        'Install',
+        function () {
+          if (!deferredPrompt) return;
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.finally(function () {
+            deferredPrompt = null;
+            toast.remove();
+          });
+        }
+      );
+      document.body.appendChild(toast);
+      requestAnimationFrame(function () {
+        toast.classList.add('is-visible');
+      });
+    });
+
+    window.addEventListener('appinstalled', function () {
+      deferredPrompt = null;
+    });
+  }
+
+  function buildToast(message, actionLabel, onAction) {
+    var toast = document.createElement('div');
+    toast.className = 'pwa-toast';
+    toast.setAttribute('role', 'status');
+
+    var text = document.createElement('span');
+    text.textContent = message;
+
+    var actionBtn = document.createElement('button');
+    actionBtn.type = 'button';
+    actionBtn.textContent = actionLabel;
+    actionBtn.addEventListener('click', onAction);
+
+    var dismissBtn = document.createElement('button');
+    dismissBtn.type = 'button';
+    dismissBtn.className = 'pwa-toast-dismiss';
+    dismissBtn.textContent = 'Dismiss';
+    dismissBtn.addEventListener('click', function () {
+      toast.classList.remove('is-visible');
+      window.setTimeout(function () { toast.remove(); }, 400);
+    });
+
+    toast.appendChild(text);
+    toast.appendChild(actionBtn);
+    toast.appendChild(dismissBtn);
+
+    return toast;
+  }
+
+  /* ============================================
      INIT
      Product grid + modal are populated by
      js/products.js and js/modal.js respectively.
      This script listens for a custom event
      ("gz:productsRendered") so newly injected
-     product cards get reveal + placeholder support
+     product cards get reveal + lazy-image support
      without any manual re-wiring.
   ============================================= */
   function init() {
@@ -258,11 +424,13 @@
     initFooterYear();
     hydratePlaceholders(document);
     initRevealAnimations();
+    initServiceWorker();
+    initInstallPrompt();
   }
 
   document.addEventListener('DOMContentLoaded', init);
 
-  // Re-run reveal + placeholder hydration whenever products.js
+  // Re-run reveal + lazy-image hydration whenever products.js
   // finishes injecting/re-filtering product cards.
   document.addEventListener('gz:productsRendered', function () {
     hydratePlaceholders(document.getElementById('productGrid'));
@@ -270,7 +438,10 @@
   });
 
   // Expose hydratePlaceholders globally so modal.js can hydrate
-  // the front/back images it injects into the modal.
+  // the front/back images it injects into the modal. Modal images
+  // are treated as eager (data-eager="true" should be set on them
+  // by modal.js, or on the elements directly) since they only ever
+  // render after the user has already asked to see them.
   window.GZ = window.GZ || {};
   window.GZ.hydratePlaceholders = hydratePlaceholders;
 

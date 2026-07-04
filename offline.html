@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENETIGZ — Offline</title>
+<style>
+  :root{
+    --bg:#f8f3e8; --ink:#2a2318; --ink-soft:#5c5040;
+    --muted:#8a7a63; --brass:#9c7d47; --accent:#7a2632; --line:#ddd0b4;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif; display:flex; align-items:center;
+    justify-content:center; padding:32px; text-align:center;
+  }
+  .card{ max-width:420px; }
+  .mark{
+    font-family:'Fraunces','Space Grotesk',serif; font-style:italic;
+    font-weight:500; font-size:2.2rem; letter-spacing:.02em; margin:0 0 6px;
+  }
+  .mark span{ color:var(--accent); font-style:normal; }
+  .code{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--brass); margin:0 0 28px;
+  }
+  h1{ font-size:1.3rem; font-weight:500; margin:0 0 12px; }
+  p{ color:var(--ink-soft); font-size:14.5px; line-height:1.6; margin:0 0 28px; }
+  button{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.07em;
+    text-transform:uppercase; background:var(--accent); color:var(--bg);
+    border:1px solid var(--accent); padding:14px 24px; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="mark">GENETIGZ<span>.</span></p>
+    <p class="code">SEQ. 000 / NO CONNECTION</p>
+    <h1>You're offline.</h1>
+    <p>This page hasn't been cached yet. Reconnect to browse the full collection — pages and product views you've already opened will keep working offline.</p>
+    <button onclick="location.reload()">Retry</button>
+  </div>
+</body>
+</html>
