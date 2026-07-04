@@ -2,7 +2,7 @@
    GENETIGZ — CORE SCRIPT
    Handles: loader, mobile sidebar, smooth scroll, reveal animations,
    review carousel duplication, PROGRESSIVE (lazy) placeholder image
-   hydration, footer year, service worker registration + install prompt.
+   hydration, and footer year.
    Product rendering + modal logic live in js/products.js and js/modal.js.
 ============================================================== */
 
@@ -75,7 +75,7 @@
     overlay.addEventListener('click', closeSidebar);
 
     // Close when a nav link is tapped (mobile UX expectation)
-    var sidebarLinks = sidebar.querySelectorAll('.sidebar-link');
+    var sidebarLinks = sidebar.querySelectorAll('.sidebar-link, .sidebar-logo');
     sidebarLinks.forEach(function (link) {
       link.addEventListener('click', closeSidebar);
     });
@@ -187,6 +187,7 @@
   function initReviewsCarousel() {
     var track = document.getElementById('reviewsTrack');
     if (!track) return;
+    if (track.dataset.duplicated === 'true') return; // guard against double-init
 
     var originalCards = Array.prototype.slice.call(track.children);
     if (!originalCards.length) return;
@@ -198,6 +199,7 @@
       fragment.appendChild(clone);
     });
     track.appendChild(fragment);
+    track.dataset.duplicated = 'true';
   }
 
   /* ============================================
@@ -296,117 +298,6 @@
   }
 
   /* ============================================
-     9. SERVICE WORKER REGISTRATION (PWA)
-     Registers service-worker.js so the app shell and
-     progressively-loaded images are cached for repeat
-     visits and offline use. Silently no-ops on
-     unsupported browsers or file:// contexts.
-  ============================================= */
-  function initServiceWorker() {
-    if (!('serviceWorker' in navigator)) return;
-    if (location.protocol === 'file:') return; // SW requires http(s)
-
-    window.addEventListener('load', function () {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then(function (registration) {
-          // Watch for an updated worker taking over and offer a refresh.
-          registration.addEventListener('updatefound', function () {
-            var newWorker = registration.installing;
-            if (!newWorker) return;
-            newWorker.addEventListener('statechange', function () {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                showUpdateToast(registration);
-              }
-            });
-          });
-        })
-        .catch(function () {
-          // Offline support degrades gracefully; site still works online.
-        });
-    });
-  }
-
-  function showUpdateToast(registration) {
-    var toast = buildToast(
-      'A new version of GENETIGZ is ready.',
-      'Refresh',
-      function () {
-        if (registration.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-        window.location.reload();
-      }
-    );
-    document.body.appendChild(toast);
-    requestAnimationFrame(function () {
-      toast.classList.add('is-visible');
-    });
-  }
-
-  /* ============================================
-     10. "ADD TO HOME SCREEN" INSTALL PROMPT
-  ============================================= */
-  function initInstallPrompt() {
-    var deferredPrompt = null;
-
-    window.addEventListener('beforeinstallprompt', function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
-
-      var toast = buildToast(
-        'Install GENETIGZ for faster, offline-ready browsing.',
-        'Install',
-        function () {
-          if (!deferredPrompt) return;
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.finally(function () {
-            deferredPrompt = null;
-            toast.remove();
-          });
-        }
-      );
-      document.body.appendChild(toast);
-      requestAnimationFrame(function () {
-        toast.classList.add('is-visible');
-      });
-    });
-
-    window.addEventListener('appinstalled', function () {
-      deferredPrompt = null;
-    });
-  }
-
-  function buildToast(message, actionLabel, onAction) {
-    var toast = document.createElement('div');
-    toast.className = 'pwa-toast';
-    toast.setAttribute('role', 'status');
-
-    var text = document.createElement('span');
-    text.textContent = message;
-
-    var actionBtn = document.createElement('button');
-    actionBtn.type = 'button';
-    actionBtn.textContent = actionLabel;
-    actionBtn.addEventListener('click', onAction);
-
-    var dismissBtn = document.createElement('button');
-    dismissBtn.type = 'button';
-    dismissBtn.className = 'pwa-toast-dismiss';
-    dismissBtn.textContent = 'Dismiss';
-    dismissBtn.addEventListener('click', function () {
-      toast.classList.remove('is-visible');
-      window.setTimeout(function () { toast.remove(); }, 400);
-    });
-
-    toast.appendChild(text);
-    toast.appendChild(actionBtn);
-    toast.appendChild(dismissBtn);
-
-    return toast;
-  }
-
-  /* ============================================
      INIT
      Product grid + modal are populated by
      js/products.js and js/modal.js respectively.
@@ -424,8 +315,6 @@
     initFooterYear();
     hydratePlaceholders(document);
     initRevealAnimations();
-    initServiceWorker();
-    initInstallPrompt();
   }
 
   document.addEventListener('DOMContentLoaded', init);
@@ -439,9 +328,9 @@
 
   // Expose hydratePlaceholders globally so modal.js can hydrate
   // the front/back images it injects into the modal. Modal images
-  // are treated as eager (data-eager="true" should be set on them
-  // by modal.js, or on the elements directly) since they only ever
-  // render after the user has already asked to see them.
+  // are treated as eager (data-eager="true" is set by modal.js on
+  // the elements directly) since they only ever render after the
+  // user has already asked to see them.
   window.GZ = window.GZ || {};
   window.GZ.hydratePlaceholders = hydratePlaceholders;
 

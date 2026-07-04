@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GENETIGZ — Offline</title>
+<link rel="icon" type="image/png" href="images/logo/logo-mark-180.png">
 <style>
   :root{
     --bg:#f8f3e8; --ink:#2a2318; --ink-soft:#5c5040;
-    --muted:#8a7a63; --brass:#9c7d47; --accent:#7a2632; --line:#ddd0b4;
+    --muted:#8a7a63; --brass:#9c7d47; --accent:#7a2632; --line:#ddd0b4; --crest:#1c1206;
   }
   *{ box-sizing:border-box; }
   body{
@@ -16,6 +17,12 @@
     justify-content:center; padding:32px; text-align:center;
   }
   .card{ max-width:420px; }
+  .mark-plate{
+    width:72px; height:72px; margin:0 auto 20px; border-radius:14px;
+    overflow:hidden; background:var(--crest);
+    box-shadow:0 14px 30px rgba(28,18,6,0.22);
+  }
+  .mark-plate img{ width:100%; height:100%; object-fit:cover; transform:scale(1.28); display:block; }
   .mark{
     font-family:'Fraunces','Space Grotesk',serif; font-style:italic;
     font-weight:500; font-size:2.2rem; letter-spacing:.02em; margin:0 0 6px;
@@ -31,11 +38,16 @@
     font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.07em;
     text-transform:uppercase; background:var(--accent); color:var(--bg);
     border:1px solid var(--accent); padding:14px 24px; cursor:pointer;
+    transition: background .25s ease, transform .25s ease;
   }
+  button:hover{ transform: translateY(-2px); }
 </style>
 </head>
 <body>
   <div class="card">
+    <div class="mark-plate">
+      <img src="images/logo/logo-mark-180.png" alt="GENETIGZ">
+    </div>
     <p class="mark">GENETIGZ<span>.</span></p>
     <p class="code">SEQ. 000 / NO CONNECTION</p>
     <h1>You're offline.</h1>

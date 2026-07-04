@@ -2,33 +2,48 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GENETIGZ — Engineered Streetwear</title>
 <meta name="description" content="GENETIGZ — engineered fabric, coded silhouettes. Premium streetwear built to spec.">
+<meta name="theme-color" content="#f8f3e8">
+
+<!-- Icons -->
+<link rel="icon" type="image/png" href="images/logo/logo-mark-180.png">
+<link rel="apple-touch-icon" href="images/logo/logo-mark-180.png">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&display=swap" rel="stylesheet">
 
 <!-- Styles -->
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="responsive.css">
 </head>
 <body>
 
 <!-- ============================================
      LOADING SCREEN
+     Markup now matches the loader CSS in style.css:
+     crest plate -> progress bar -> meta line.
 ============================================= -->
-<div id="loader" class="loader">
+<div id="loader" class="loader" role="status" aria-live="polite">
   <div class="loader-inner">
-    <svg class="loader-mark" viewBox="0 0 120 120" aria-hidden="true">
-      <circle class="loader-ring" cx="60" cy="60" r="52"></circle>
-    </svg>
-    <div class="loader-word" aria-label="GENETIGZ">
-      <span style="--i:0">G</span><span style="--i:1">E</span><span style="--i:2">N</span><span style="--i:3">E</span><span style="--i:4">T</span><span style="--i:5">I</span><span style="--i:6">G</span><span style="--i:7">Z</span>
+
+    <div class="loader-plate corner-framed">
+      <img class="loader-plate-img" src="images/logo/logo-full.png" alt="GENETIGZ — Wear Your Story" width="665" height="560">
     </div>
-    <div class="loader-sub">SEQ. 001 / STREETWEAR ENGINEERED</div>
+
+    <div class="loader-progress">
+      <div class="loader-progress-fill"></div>
+    </div>
+
+    <div class="loader-meta">
+      <span class="loader-meta-code">SEQ. 001</span>
+      <span class="loader-meta-sep">/</span>
+      <span>STREETWEAR ENGINEERED</span>
+    </div>
+
   </div>
 </div>
 
@@ -37,7 +52,11 @@
 ============================================= -->
 <nav id="sidebar" class="sidebar" aria-label="Product categories">
   <div class="sidebar-top">
-    <span class="sidebar-logo">GZ</span>
+    <a href="#top" class="sidebar-logo" data-scroll="#top" aria-label="GENETIGZ — back to top">
+      <span class="sidebar-logo-mark">
+        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+    </a>
   </div>
 
   <ul class="sidebar-list">
@@ -67,7 +86,12 @@
 ============================================= -->
 <header class="topbar">
   <div class="topbar-inner">
-    <a href="#top" class="brand">GENETIGZ<span class="brand-dot">.</span></a>
+    <a href="#top" class="brand" data-scroll="#top">
+      <span class="brand-mark">
+        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+      <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+    </a>
     <div class="topbar-tag">ENGINEERED STREETWEAR — BATCH 01</div>
     <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
        class="btn-customize" target="_blank" rel="noopener">
@@ -101,8 +125,8 @@
       </div>
 
       <div class="hero-visual">
-        <div class="hero-image ph-image" data-src="images/hero/hero-main.jpg" data-label="HERO — FRONT">
-          <span class="ph-tag">IMG // PENDING UPLOAD</span>
+        <div class="hero-image ph-image" data-src="images/hero/hero-main.png" data-label="HERO — FRONT" data-eager="true">
+       
         </div>
 
         <!-- Technical spec annotations -->
@@ -228,7 +252,10 @@
   <footer class="site-footer">
     <div class="footer-grid">
       <div class="footer-brand">
-        <span class="brand">GENETIGZ<span class="brand-dot">.</span></span>
+        <span class="brand">
+          <span class="brand-mark"><img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="lazy"></span>
+          <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+        </span>
         <p>Engineered streetwear.<br>Designed, tested, and shipped from India.</p>
       </div>
       <div class="footer-col">
