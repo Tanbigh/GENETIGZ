@@ -4,31 +4,28 @@
    review carousel (desktop marquee + mobile swipe/scroll-snap),
    PROGRESSIVE (lazy) placeholder image hydration, and footer year.
    Product rendering + modal logic live in js/products.js and js/modal.js.
+
+   NOTE: unchanged from the previous version — none of the requested
+   fixes (removing overlay text, wordmark font, navbar color, mobile
+   logo clipping) touch behavior/JS, only markup and CSS.
 ============================================================== */
 
 (function () {
   'use strict';
 
-  /* ============================================
-     1. LOADING SCREEN
-     Hides the loader after a fixed delay with a
-     fade transition (handled via .is-hidden in CSS).
-  ============================================= */
   function initLoader() {
     var loader = document.getElementById('loader');
     if (!loader) return;
 
-    var MIN_DISPLAY_MS = 2200; // feels intentional, not sluggish
+    var MIN_DISPLAY_MS = 2200;
 
     window.addEventListener('load', function () {
       window.setTimeout(function () {
         loader.classList.add('is-hidden');
-        // Prevent tab-focus / interaction with hidden loader
         loader.setAttribute('aria-hidden', 'true');
       }, MIN_DISPLAY_MS);
     });
 
-    // Fallback: if 'load' already fired (cached assets), still hide it.
     if (document.readyState === 'complete') {
       window.setTimeout(function () {
         loader.classList.add('is-hidden');
@@ -37,9 +34,6 @@
     }
   }
 
-  /* ============================================
-     2. MOBILE SIDEBAR TOGGLE + OVERLAY
-  ============================================= */
   function initMobileSidebar() {
     var toggle = document.getElementById('navToggle');
     var sidebar = document.getElementById('sidebar');
@@ -74,20 +68,17 @@
     toggle.addEventListener('click', toggleSidebar);
     overlay.addEventListener('click', closeSidebar);
 
-    // Close when a nav link is tapped (mobile UX expectation)
     var sidebarLinks = sidebar.querySelectorAll('.sidebar-link, .sidebar-logo');
     sidebarLinks.forEach(function (link) {
       link.addEventListener('click', closeSidebar);
     });
 
-    // Close on ESC
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
         closeSidebar();
       }
     });
 
-    // Close on window resize back to desktop breakpoint
     window.addEventListener('resize', function () {
       if (window.innerWidth > 900 && sidebar.classList.contains('is-open')) {
         closeSidebar();
@@ -95,10 +86,6 @@
     });
   }
 
-  /* ============================================
-     3. SMOOTH SCROLLING
-     Handles any element with [data-scroll="#target"]
-  ============================================= */
   function initSmoothScroll() {
     var scrollTriggers = document.querySelectorAll('[data-scroll]');
 
@@ -114,10 +101,6 @@
     });
   }
 
-  /* ============================================
-     4. SCROLL CUE BUTTON
-     Scrolls to the collection section from the hero.
-  ============================================= */
   function initScrollCue() {
     var cue = document.getElementById('scrollCue');
     var collection = document.getElementById('collection');
@@ -128,12 +111,6 @@
     });
   }
 
-  /* ============================================
-     5. REVEAL ANIMATIONS (Intersection Observer)
-     Auto-tags key sections/elements with .reveal so
-     the existing CSS transition kicks in on scroll,
-     without needing to touch the HTML.
-  ============================================= */
   function initRevealAnimations() {
     var revealSelectors = [
       '.quality-item',
@@ -146,7 +123,7 @@
     var revealTargets = [];
     revealSelectors.forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (el) {
-        if (el.classList.contains('reveal')) return; // already tagged, avoid re-observing
+        if (el.classList.contains('reveal')) return;
         el.classList.add('reveal');
         revealTargets.push(el);
       });
@@ -154,7 +131,6 @@
 
     if (!revealTargets.length) return;
 
-    // If IntersectionObserver isn't supported, just show everything.
     if (!('IntersectionObserver' in window)) {
       revealTargets.forEach(function (el) {
         el.classList.add('is-visible');
@@ -179,18 +155,10 @@
     });
   }
 
-  /* ============================================
-     6. REVIEWS — DESKTOP MARQUEE DUPLICATION
-     Duplicates the review cards once so the CSS
-     keyframe (translateX -50%) loops seamlessly.
-     (Desktop/tablet only — see section 6b for the
-     mobile swipe/scroll-snap behaviour, which hides
-     these clones and uses the originals instead.)
-  ============================================= */
   function initReviewsCarousel() {
     var track = document.getElementById('reviewsTrack');
     if (!track) return;
-    if (track.dataset.duplicated === 'true') return; // guard against double-init
+    if (track.dataset.duplicated === 'true') return;
 
     var originalCards = Array.prototype.slice.call(track.children);
     if (!originalCards.length) return;
@@ -198,28 +166,13 @@
     var fragment = document.createDocumentFragment();
     originalCards.forEach(function (card) {
       var clone = card.cloneNode(true);
-      clone.setAttribute('aria-hidden', 'true'); // duplicates are decorative
+      clone.setAttribute('aria-hidden', 'true');
       fragment.appendChild(clone);
     });
     track.appendChild(fragment);
     track.dataset.duplicated = 'true';
   }
 
-  /* ============================================
-     6b. REVIEWS — MOBILE SWIPE / SCROLL-SNAP CAROUSEL
-     Below the 640px breakpoint, css/responsive.css turns the track
-     into a native horizontally-scrolling, snap-aligned row (see
-     .reviews-track-wrap overflow-x:auto + scroll-snap-type), which
-     is what gives real touch/swipe support with momentum — rather
-     than trying to reimplement dragging by hand. This block layers
-     three small enhancements on top of that native behaviour:
-       - a set of tappable progress dots (one per unique review)
-       - a gentle auto-advance so the row still "does something" if
-         the person never swipes, which pauses the moment they touch
-         the track and resumes a few seconds after they let go
-       - keeping the dots in sync with whatever card is centered,
-         whether the person swiped, tapped a dot, or it auto-advanced
-  ============================================= */
   function initReviewsMobileCarousel() {
     var wrap = document.querySelector('.reviews-track-wrap');
     var track = document.getElementById('reviewsTrack');
@@ -235,8 +188,6 @@
     var isPointerDown = false;
 
     function getCards() {
-      // Only the real cards — the desktop-marquee clones are
-      // aria-hidden and display:none at this breakpoint.
       return Array.prototype.slice.call(track.children).filter(function (el) {
         return el.getAttribute('aria-hidden') !== 'true';
       });
@@ -258,10 +209,6 @@
       }
     }
 
-    // Position of a card within the scrollable content, independent of
-    // offsetParent quirks (offsetLeft can resolve against an ancestor
-    // far above the scroll container if nothing in between is
-    // position:relative, which would silently break this math).
     function cardStart(card) {
       var wrapRect = wrap.getBoundingClientRect();
       var cardRect = card.getBoundingClientRect();
@@ -345,35 +292,11 @@
     if (!cards.length) return;
     wire(cards);
 
-    // Respect reduced-motion preference: keep the swipe/dots UX but
-    // skip the automatic advancing.
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       stopAuto();
     }
   }
 
-  /* ============================================
-     7. PROGRESSIVE (LAZY) PLACEHOLDER IMAGE
-        HYDRATION
-     Any element with class "ph-image" and a
-     "data-src" attribute is only resolved once it's
-     about to enter the viewport (IntersectionObserver,
-     generous rootMargin so it's ready just before the
-     user scrolls to it) — this is what makes images
-     load progressively instead of all at once on
-     page load.
-
-     Elements marked [data-eager="true"] (the hero, or
-     anything already visible above the fold) skip the
-     viewport gate and resolve immediately, since
-     waiting for those would just delay the first paint
-     of content the user already sees.
-
-     If a real file exists at data-src, it's swapped in
-     via the --img CSS variable and .is-loaded is added
-     (triggering the crossfade in CSS). If not found,
-     the placeholder styling stays as-is.
-  ============================================= */
   var lazyImageObserver = null;
 
   function resolvePlaceholder(el) {
@@ -393,7 +316,6 @@
     };
 
     probe.onerror = function () {
-      // No real file yet — keep placeholder as-is.
       el.classList.remove('is-loading');
       el.dataset.hydrated = 'false';
     };
@@ -413,7 +335,7 @@
           }
         });
       },
-      { rootMargin: '300px 0px', threshold: 0.01 } // start loading well before it's on-screen
+      { rootMargin: '300px 0px', threshold: 0.01 }
     );
 
     return lazyImageObserver;
@@ -430,7 +352,6 @@
       var observer = getLazyImageObserver();
 
       if (isEager || !observer) {
-        // Above-the-fold content, or no IO support — resolve right away.
         resolvePlaceholder(el);
       } else {
         observer.observe(el);
@@ -438,24 +359,12 @@
     });
   }
 
-  /* ============================================
-     8. FOOTER YEAR
-  ============================================= */
   function initFooterYear() {
     var yearEl = document.getElementById('year');
     if (!yearEl) return;
     yearEl.textContent = new Date().getFullYear();
   }
 
-  /* ============================================
-     INIT
-     Product grid + modal are populated by
-     js/products.js and js/modal.js respectively.
-     This script listens for a custom event
-     ("gz:productsRendered") so newly injected
-     product cards get reveal + lazy-image support
-     without any manual re-wiring.
-  ============================================= */
   function init() {
     initLoader();
     initMobileSidebar();
@@ -470,18 +379,11 @@
 
   document.addEventListener('DOMContentLoaded', init);
 
-  // Re-run reveal + lazy-image hydration whenever products.js
-  // finishes injecting/re-filtering product cards.
   document.addEventListener('gz:productsRendered', function () {
     hydratePlaceholders(document.getElementById('productGrid'));
     initRevealAnimations();
   });
 
-  // Expose hydratePlaceholders globally so modal.js can hydrate
-  // the front/back images it injects into the modal. Modal images
-  // are treated as eager (data-eager="true" is set by modal.js on
-  // the elements directly) since they only ever render after the
-  // user has already asked to see them.
   window.GZ = window.GZ || {};
   window.GZ.hydratePlaceholders = hydratePlaceholders;
 

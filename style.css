@@ -14,7 +14,7 @@
    top-left corners (sidebar + topbar).
 ============================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap');
 
 :root{
   /* ---- Color ---- */
@@ -27,17 +27,19 @@
   --muted:     #8a7a63;   /* stone, meta/label text */
   --line:      #ddd0b4;   /* hairline stone */
   --line-soft: rgba(42,35,24,0.08);
-  --accent:    #7a2632;   /* signal — oxblood, used sparingly, precise */
+  --accent:    #1c1206;   /* signal — oxblood, used sparingly, precise */
   --accent-ink:#f8f3e8;
   --brass:     #9c7d47;   /* metal accent — the luxury pull */
   --brass-soft:rgba(156,125,71,0.35);
   --crest:     #1c1206;   /* logo plate dark — matches crest artwork bg */
+  --crest-text:#f6e8c2;   /* warm cream text used on crest-dark surfaces (navbar, collection + customize CTAs) */
 
   /* ---- Type ---- */
   --font-display: 'Fraunces', 'Space Grotesk', serif;
   --font-structural: 'Space Grotesk', sans-serif;
   --font-body:    'Inter', sans-serif;
   --font-mono:    'IBM Plex Mono', monospace;
+  --font-brand:   'Cormorant Garamond', 'Fraunces', serif; /* used only for the GENETIGZ wordmark */
 
   /* ---- Layout ---- */
   --sidebar-w: 220px;
@@ -135,10 +137,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
   align-items: center;
 }
 
-/* Crest plate — the actual logo artwork (dark plate, cream monogram +
-   wordmark), shown whole and uncropped as a single framed "stamp".
-   This is the one focal element; everything else below it is quiet
-   supporting detail, in order: plate → progress → meta line. */
 .loader-plate{
   width: min(46vw, 280px);
   aspect-ratio: 665 / 560;
@@ -157,10 +155,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
 }
 @keyframes plateIn{ to{ opacity: 1; transform: scale(1); } }
 
-/* Progress bar — reads as a technical loading indicator rather than
-   a spinner, in keeping with the spec-sheet / engineered language
-   used everywhere else on the site. Timed to finish just before the
-   loader itself fades (see MIN_DISPLAY_MS in script.js). */
 .loader-progress{
   width: min(40vw, 220px);
   height: 2px;
@@ -236,15 +230,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
   background: rgba(255,253,248,0.6);
 }
 
-/* --- Progressive / lazy loading states ---
-   Placeholders stay fully visible (they're informative, not decorative)
-   until a real image resolves in the viewport, then it crossfades in
-   rather than popping — this is the "developing photo" cue for
-   progressively-loaded content. Elements marked data-eager (e.g. the
-   hero) skip the viewport-gated delay entirely in JS but still get
-   the same soft crossfade once loaded. A brief shimmer plays while
-   an eager/near-viewport image is actively resolving, so the wait
-   itself reads as "in progress" rather than static. */
 .ph-image{ transition: opacity .5s var(--ease-soft); }
 .ph-image.is-loading{
   opacity: 1;
@@ -265,7 +250,6 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
   to{ opacity: 1; }
 }
 
-/* Signature motif: hairline corner brackets, used on framed visuals */
 .corner-framed{ position: relative; }
 .corner-framed::after{
   content: '';
@@ -295,6 +279,7 @@ a:focus-visible, button:focus-visible, [tabindex]:focus-visible{
   justify-content: center;
   width: 30px;
   height: 30px;
+  aspect-ratio: 1 / 1;
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
@@ -311,6 +296,14 @@ a.brand:hover .brand-mark,
 .brand:hover .brand-mark{
   transform: rotate(-6deg) scale(1.06);
   box-shadow: 0 6px 16px rgba(28,18,6,0.28);
+}
+
+/* GENETIGZ wordmark — every occurrence (topbar, footer, copyright
+   line) shares this class so the typeface can be controlled from
+   one place. Only font-family changes here; weight/style/size still
+   come from the surrounding .brand / .footer-brand rules. */
+.brand-word{
+  font-family: var(--font-brand);
 }
 
 /* ==============================================================
@@ -425,7 +418,6 @@ a.brand:hover .brand-mark,
 .sidebar-customize:hover svg{ transform: translateX(3px); }
 .sidebar-customize svg{ transition: transform .3s var(--ease); }
 
-/* Mobile nav toggle (hidden on desktop) */
 .nav-toggle{
   display: none;
   position: fixed;
@@ -467,9 +459,12 @@ a.brand:hover .brand-mark,
   top: 0;
   z-index: 40;
   margin-left: var(--sidebar-w);
-  background: rgba(248,243,232,0.85);
+  /* Same crest dark used behind the logo mark, now solid so the
+     navbar reads as its own branded bar rather than a tinted
+     ivory strip. */
+  background: var(--crest);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--crest);
 }
 .topbar-inner{
   height: var(--topbar-h);
@@ -488,9 +483,17 @@ a.brand:hover .brand-mark,
   font-weight: 500;
   font-size: 21px;
   letter-spacing: 0.01em;
+  flex-shrink: 0;
 }
 .brand-word{ display: inline-flex; align-items: baseline; }
 .brand-dot{ color: var(--accent); font-style: normal; }
+/* Topbar sits on the dark crest surface now, so its own text needs
+   the light/cream pairing instead of the default espresso ink used
+   everywhere else .brand / .brand-dot / .topbar-tag appear (e.g. the
+   footer, where the background is still light). Scoped to .topbar so
+   those shared classes keep their original colors elsewhere. */
+.topbar .brand{ color: var(--crest-text); }
+.topbar .brand-dot{ color: var(--brass); }
 .topbar-tag{
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -499,12 +502,15 @@ a.brand:hover .brand-mark,
   flex: 1;
   text-align: center;
 }
+.topbar .topbar-tag{ color: rgba(246,232,194,0.6); }
 .btn-customize{
   font-family: var(--font-mono);
   font-size: 11.5px;
   letter-spacing: .08em;
   text-transform: uppercase;
-  border: 1px solid var(--ink);
+  background: var(--crest);
+  color: var(--crest-text);
+  border: 1px solid var(--crest-text);
   padding: 10px 18px;
   white-space: nowrap;
   transition: background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
@@ -582,6 +588,17 @@ main{ margin-left: var(--sidebar-w); }
 }
 .btn-primary:hover{ transform: translateY(-2px); box-shadow: 0 10px 30px rgba(122,38,50,0.2); }
 
+/* View Collection — same button shape/behavior as .btn-primary, just
+   recolored to the crest dark / cream pairing on request. Scoped to
+   its own class rather than overriding .btn-primary so the modal's
+   "Order on WhatsApp" button (which shares .btn-primary) is untouched. */
+.btn-collection{
+  background: var(--crest);
+  border-color: var(--crest);
+  color: var(--crest-text);
+}
+.btn-collection:hover{ box-shadow: 0 10px 30px rgba(28,18,6,0.32); }
+
 .btn-ghost{
   display: inline-flex;
   align-items: center;
@@ -599,7 +616,7 @@ main{ margin-left: var(--sidebar-w); }
 .hero-visual{
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1; /* perfect square showcase frame */
+  aspect-ratio: 1 / 1;
   opacity: 0;
   transform: scale(0.97);
   animation: heroVisualIn 1.1s var(--ease) forwards;
@@ -611,14 +628,9 @@ main{ margin-left: var(--sidebar-w); }
 .hero-image{
   width: 100%;
   height: 100%;
-  border-radius: 22px; /* clips the placeholder/photo to match the frame */
+  border-radius: 22px;
   box-shadow: none;
 }
-/* The source photo isn't a perfect square (it's a taller full-length
-   shot), so covering the square frame like the product-card thumbnails
-   do would crop heads/feet. Instead the hero specifically shows the
-   whole photo uncropped (object-fit:contain equivalent) centered on a
-   soft matting tone — reads like a framed print rather than a crop. */
 .hero-image.ph-image.is-loaded{
   background-size: contain;
   background-repeat: no-repeat;
@@ -655,9 +667,6 @@ main{ margin-left: var(--sidebar-w); }
   flex-shrink: 0;
 }
 .spec-01{ top: 8%;  left: -6%;  animation-delay: 1.2s; }
-.spec-02{ top: 34%; right: -10%; animation-delay: 1.4s; }
-.spec-03{ bottom: 22%; left: -10%; animation-delay: 1.6s; }
-.spec-04{ bottom: 4%; right: -4%; animation-delay: 1.8s; }
 @keyframes specIn{ to{ opacity: 1; transform: translateX(0); } }
 
 .scroll-cue{
@@ -790,7 +799,7 @@ main{ margin-left: var(--sidebar-w); }
 .collection-sub{ color: var(--muted); font-size: 13.5px; margin: 0; font-family: var(--font-mono); letter-spacing: .03em; }
 
 .collection-tabs{
-  display: none; /* shown on mobile / as secondary access; sidebar is primary on desktop */
+  display: none;
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 34px;
@@ -885,11 +894,7 @@ main{ margin-left: var(--sidebar-w); }
 .product-card:hover .product-card-foot span.view-details{ color: var(--accent); letter-spacing: .12em; }
 
 /* ==============================================================
-   FOOTER — modern, dynamic, engineered-luxury take on a site footer.
-   Same brand mark, catalog links, and WhatsApp order channel as
-   before, restyled with a quiet decorative backdrop, an animated
-   accent rule, circular social icons, and underline-on-hover links
-   instead of flat text.
+   FOOTER
 ============================================================== */
 .site-footer{
   position: relative;
@@ -898,8 +903,6 @@ main{ margin-left: var(--sidebar-w); }
   background: var(--bg-alt);
   overflow: hidden;
 }
-/* faint radial glow + dot grid, echoes the .quality section texture
-   so the footer reads as part of the same system, not a bolt-on */
 .site-footer::before{
   content: '';
   position: absolute;
@@ -931,9 +934,6 @@ main{ margin-left: var(--sidebar-w); }
 .footer-brand .brand{ font-size: 20px; }
 .footer-brand p{ color: var(--ink-soft); font-size: 13.5px; margin: 16px 0 26px; line-height: 1.75; font-weight: 300; max-width: 34ch; }
 
-/* Circular social icon row, brass hairline by default, fills solid
-   brass with a lift on hover — same interaction language as the
-   sidebar "Customize" pill elsewhere on the site. */
 .footer-social{
   display: flex;
   align-items: center;
@@ -992,8 +992,6 @@ main{ margin-left: var(--sidebar-w); }
   margin-bottom: 15px;
   transition: color .25s var(--ease), transform .25s var(--ease);
 }
-/* animated underline sweep instead of the old "nudge + recolor" —
-   reads as a more deliberate, premium micro-interaction */
 .footer-col a::after, .footer-col button::after{
   content: '';
   position: absolute;
@@ -1031,8 +1029,6 @@ main{ margin-left: var(--sidebar-w); }
   align-items: center;
   gap: 8px;
 }
-/* small "systems nominal" pulse — quiet, technical, on-brand rather
-   than decorative for its own sake */
 .footer-code::before{
   content: '';
   width: 6px; height: 6px;

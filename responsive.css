@@ -46,7 +46,14 @@
   .sidebar.is-open{ transform: translateX(0); }
   .topbar{ margin-left: 0; }
   .topbar-inner{
-    padding-left: calc(68px + env(safe-area-inset-left));
+    /* Nav toggle sits fixed at left:18px with a width of 42px, so its
+       right edge is at ~60px. Padding here must clear that edge with
+       room to spare, or the toggle visually overlaps/clips the brand
+       mark next to it — this is what caused the logo to look cropped
+       in the navbar on phones. Kept consistent down through the
+       narrower breakpoints below instead of shrinking past the
+       toggle's footprint. */
+    padding-left: calc(70px + env(safe-area-inset-left));
     padding-right: calc(20px + env(safe-area-inset-right));
   }
   .topbar-tag{ display: none; }
@@ -83,9 +90,12 @@
 }
 
 /* ==============================================================
-   BRAND / LOGO — guard against any distortion at small sizes
-   (aspect-ratio + object-fit:contain in style.css already keep the
-   artwork intact; this only fine-tunes spacing at tight widths)
+   BRAND / LOGO — guard against any distortion or clipping at small
+   sizes. aspect-ratio + object-fit:contain in style.css already
+   keep the artwork intact and flex-shrink:0 on .brand / .brand-mark
+   stops the flex layout from squeezing the mark; this only fine-
+   tunes spacing so nothing else on the bar (customize button, tag)
+   crowds the logo out at tight widths.
 ============================================================== */
 @media (max-width: 380px){
   .brand{ gap: 8px; font-size: 18px; }
@@ -96,25 +106,27 @@
   .spec-row dd{ font-size: 13.5px; }
 }
 @media (max-width: 340px){
-  .topbar-inner{ padding-left: calc(58px + env(safe-area-inset-left)); padding-right: calc(14px + env(safe-area-inset-right)); gap: 10px; }
+  .topbar-inner{
+    /* Same clearance rule as the 900px breakpoint above — must stay
+       clear of the fixed nav-toggle's right edge (~60px) even as
+       everything else on the bar tightens up. */
+    padding-left: calc(66px + env(safe-area-inset-left));
+    padding-right: calc(14px + env(safe-area-inset-right));
+    gap: 10px;
+  }
   .brand{ gap: 6px; font-size: 16px; }
   .btn-customize{ padding: 8px 10px; font-size: 9.5px; }
 }
 
 /* ==============================================================
    REVIEWS SECTION — MOBILE RESPONSIVE + TOUCH/SWIPE FIXES
-   Scoped to small viewports only (≤640px, with a tighter tier for
-   ≤380px). Desktop layout (fixed 320px cards, marquee speed, etc.)
-   in style.css is untouched — these rules only ever apply below
-   the breakpoint and override via cascade, not by editing the
-   original selectors.
 ============================================================== */
 
 @media (max-width: 640px) {
 
   .reviews{
     padding: 64px 0 72px;
-    overflow: hidden; /* extra guard against any stray horizontal scroll */
+    overflow: hidden;
   }
 
   .reviews .eyebrow.center{
@@ -129,14 +141,6 @@
     margin: 0 0 36px;
   }
 
-  /* On touch screens the CSS marquee (translateX keyframe loop) is
-     replaced with a native horizontally-scrolling, scroll-snapping
-     track. This is what actually gives smooth, reliable touch/swipe
-     behavior — momentum, snapping, and accessibility all come from
-     the browser instead of a hand-rolled drag simulation. The
-     auto-scroll "autoplay" feel is preserved via a lightweight JS
-     auto-advance (see script.js) that respects a user touch/drag by
-     pausing until they're done. */
   .reviews-track-wrap{
     width: 100%;
     overflow-x: auto;
@@ -145,7 +149,6 @@
     scroll-behavior: smooth;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    /* tighter mask fade so cards aren't clipped too aggressively on narrow screens */
     mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
     -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
   }
@@ -154,12 +157,9 @@
   .reviews-track{
     gap: 16px;
     padding: 0 11vw 4px;
-    animation: none !important; /* the desktop marquee keyframes are disabled; scrolling is native here */
+    animation: none !important;
   }
 
-  /* The clones script.js appends for the desktop marquee loop would
-     just be extra, non-swipeable duplicates on a snap-scroll track,
-     so they're hidden here and only the original, unique cards show. */
   .reviews-track > [aria-hidden="true"]{ display: none; }
 
   .review-card{
@@ -191,9 +191,6 @@
     white-space: normal;
   }
 
-  /* Swipe hint dots — purely decorative progress indicator injected
-     by script.js so mobile users know the row is interactive and
-     where they are in the loop. */
   .reviews-dots{
     display: flex;
     justify-content: center;
