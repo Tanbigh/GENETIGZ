@@ -26,14 +26,14 @@
 /* ---- Large desktop: give the layout a touch more breathing room ---- */
 @media (min-width: 1600px){
   :root{ --sidebar-w: 240px; }
+  .hero-visual{ max-width: 620px; margin-left: auto; }
 }
 /* ---- Tablet / small laptop ---- */
 @media (max-width: 1200px){
   .hero-grid{ gap: 48px; }
   .quality-grid{ grid-template-columns: repeat(2, 1fr); gap: 34px 30px; }
   .product-grid{ grid-template-columns: repeat(2, 1fr); }
-  .footer-grid{ grid-template-columns: 1fr 1fr; }
-  .footer-brand{ grid-column: 1 / -1; }
+  .footer-grid{ grid-template-columns: 1.3fr 1fr 1fr; gap: 32px; }
 }
 /* ---- Sidebar collapses to a mobile drawer ---- */
 @media (max-width: 900px){
@@ -54,7 +54,7 @@
   .collection-tabs{ display: flex; }
   .hero{ padding: 96px 20px 90px; }
   .hero-grid{ grid-template-columns: 1fr; gap: 44px; }
-  .hero-visual{ order: -1; aspect-ratio: 4/3; }
+  .hero-visual{ order: -1; aspect-ratio: 1 / 1; }
   .hero-title{ font-size: clamp(2.4rem, 9vw, 3.2rem); }
   .spec-callout{ display: none; } /* declutter on small screens; specs live in modal/product data */
   .quality{ padding: 80px 20px; }
@@ -63,8 +63,8 @@
   .review-card{ width: 84vw; }
   .collection{ padding: 10px 20px 90px; }
   .product-grid{ grid-template-columns: repeat(2, 1fr); gap: 18px; }
-  .site-footer{ padding: 60px 20px 26px; padding-bottom: calc(26px + env(safe-area-inset-bottom)); }
-  .footer-grid{ grid-template-columns: 1fr; gap: 34px; margin-bottom: 40px; }
+  .site-footer{ padding: 64px 20px 26px; padding-bottom: calc(26px + env(safe-area-inset-bottom)); }
+  .footer-grid{ grid-template-columns: 1fr; gap: 40px; margin-bottom: 40px; }
   .modal-body{ grid-template-columns: 1fr; }
   .modal-visuals{ grid-template-columns: 1fr 1fr; }
   .modal{ max-height: 92vh; }
@@ -77,11 +77,32 @@
   .hero-actions a{ justify-content: center; }
   .modal-visuals{ grid-template-columns: 1fr; }
   .footer-bottom{ flex-direction: column; align-items: flex-start; }
+  .footer-social{ align-self: flex-start; }
   .loader-plate{ width: min(64vw, 240px); }
   .loader-progress{ width: min(56vw, 200px); }
 }
+
 /* ==============================================================
-   REVIEWS SECTION — MOBILE RESPONSIVE FIXES
+   BRAND / LOGO — guard against any distortion at small sizes
+   (aspect-ratio + object-fit:contain in style.css already keep the
+   artwork intact; this only fine-tunes spacing at tight widths)
+============================================================== */
+@media (max-width: 380px){
+  .brand{ gap: 8px; font-size: 18px; }
+  .brand-mark{ width: 26px; height: 26px; padding: 3px; }
+  .btn-customize{ padding: 9px 13px; font-size: 10.5px; }
+  .modal-info{ padding: 26px 18px 30px; }
+  .spec-row{ grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
+  .spec-row dd{ font-size: 13.5px; }
+}
+@media (max-width: 340px){
+  .topbar-inner{ padding-left: calc(58px + env(safe-area-inset-left)); padding-right: calc(14px + env(safe-area-inset-right)); gap: 10px; }
+  .brand{ gap: 6px; font-size: 16px; }
+  .btn-customize{ padding: 8px 10px; font-size: 9.5px; }
+}
+
+/* ==============================================================
+   REVIEWS SECTION — MOBILE RESPONSIVE + TOUCH/SWIPE FIXES
    Scoped to small viewports only (≤640px, with a tighter tier for
    ≤380px). Desktop layout (fixed 320px cards, marquee speed, etc.)
    in style.css is untouched — these rules only ever apply below
@@ -108,23 +129,44 @@
     margin: 0 0 36px;
   }
 
+  /* On touch screens the CSS marquee (translateX keyframe loop) is
+     replaced with a native horizontally-scrolling, scroll-snapping
+     track. This is what actually gives smooth, reliable touch/swipe
+     behavior — momentum, snapping, and accessibility all come from
+     the browser instead of a hand-rolled drag simulation. The
+     auto-scroll "autoplay" feel is preserved via a lightweight JS
+     auto-advance (see script.js) that respects a user touch/drag by
+     pausing until they're done. */
   .reviews-track-wrap{
     width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     /* tighter mask fade so cards aren't clipped too aggressively on narrow screens */
     mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
     -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
   }
+  .reviews-track-wrap::-webkit-scrollbar{ display: none; }
 
   .reviews-track{
     gap: 16px;
-    /* proportionally faster since cards are narrower than desktop's 320px */
-    animation-duration: 26s;
+    padding: 0 11vw 4px;
+    animation: none !important; /* the desktop marquee keyframes are disabled; scrolling is native here */
   }
+
+  /* The clones script.js appends for the desktop marquee loop would
+     just be extra, non-swipeable duplicates on a snap-scroll track,
+     so they're hidden here and only the original, unique cards show. */
+  .reviews-track > [aria-hidden="true"]{ display: none; }
 
   .review-card{
     width: 78vw;
     max-width: 300px;
     flex-shrink: 0;
+    scroll-snap-align: center;
     padding: 22px 20px;
     box-sizing: border-box;
   }
@@ -148,6 +190,30 @@
     letter-spacing: .04em;
     white-space: normal;
   }
+
+  /* Swipe hint dots — purely decorative progress indicator injected
+     by script.js so mobile users know the row is interactive and
+     where they are in the loop. */
+  .reviews-dots{
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 28px;
+  }
+  .reviews-dots span{
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background .3s var(--ease), transform .3s var(--ease);
+  }
+  .reviews-dots span.is-active{
+    background: var(--brass);
+    transform: scale(1.3);
+  }
+}
+
+@media (min-width: 641px){
+  .reviews-dots{ display: none; }
 }
 
 /* Extra-small phones (iPhone SE / small Android, ~320–380px) */
@@ -175,4 +241,20 @@
   .review-text{
     font-size: 14px;
   }
+}
+
+/* ==============================================================
+   FOOTER — RESPONSIVE FOR THE REDESIGNED MARKUP
+============================================================== */
+@media (max-width: 900px){
+  .footer-col{ margin-bottom: 4px; }
+  .footer-cta{ width: 100%; justify-content: center; }
+}
+@media (max-width: 560px){
+  .site-footer{ padding-top: 56px; }
+  .footer-grid{ gap: 34px; }
+  .footer-social{ gap: 10px; }
+  .footer-social a{ width: 36px; height: 36px; }
+  .footer-cta{ width: 100%; justify-content: center; }
+  .footer-bottom-links{ gap: 14px; flex-wrap: wrap; }
 }

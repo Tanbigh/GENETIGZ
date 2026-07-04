@@ -1,8 +1,8 @@
 /* ==============================================================
    GENETIGZ — CORE SCRIPT
    Handles: loader, mobile sidebar, smooth scroll, reveal animations,
-   review carousel duplication, PROGRESSIVE (lazy) placeholder image
-   hydration, and footer year.
+   review carousel (desktop marquee + mobile swipe/scroll-snap),
+   PROGRESSIVE (lazy) placeholder image hydration, and footer year.
    Product rendering + modal logic live in js/products.js and js/modal.js.
 ============================================================== */
 
@@ -180,9 +180,12 @@
   }
 
   /* ============================================
-     6. REVIEWS — INFINITE SCROLL DUPLICATION
+     6. REVIEWS — DESKTOP MARQUEE DUPLICATION
      Duplicates the review cards once so the CSS
      keyframe (translateX -50%) loops seamlessly.
+     (Desktop/tablet only — see section 6b for the
+     mobile swipe/scroll-snap behaviour, which hides
+     these clones and uses the originals instead.)
   ============================================= */
   function initReviewsCarousel() {
     var track = document.getElementById('reviewsTrack');
@@ -200,6 +203,153 @@
     });
     track.appendChild(fragment);
     track.dataset.duplicated = 'true';
+  }
+
+  /* ============================================
+     6b. REVIEWS — MOBILE SWIPE / SCROLL-SNAP CAROUSEL
+     Below the 640px breakpoint, css/responsive.css turns the track
+     into a native horizontally-scrolling, snap-aligned row (see
+     .reviews-track-wrap overflow-x:auto + scroll-snap-type), which
+     is what gives real touch/swipe support with momentum — rather
+     than trying to reimplement dragging by hand. This block layers
+     three small enhancements on top of that native behaviour:
+       - a set of tappable progress dots (one per unique review)
+       - a gentle auto-advance so the row still "does something" if
+         the person never swipes, which pauses the moment they touch
+         the track and resumes a few seconds after they let go
+       - keeping the dots in sync with whatever card is centered,
+         whether the person swiped, tapped a dot, or it auto-advanced
+  ============================================= */
+  function initReviewsMobileCarousel() {
+    var wrap = document.querySelector('.reviews-track-wrap');
+    var track = document.getElementById('reviewsTrack');
+    var dotsHost = document.getElementById('reviewsDots');
+    if (!wrap || !track || !dotsHost) return;
+    if (wrap.dataset.mobileInit === 'true') return;
+    wrap.dataset.mobileInit = 'true';
+
+    var AUTO_ADVANCE_MS = 4200;
+    var RESUME_AFTER_TOUCH_MS = 3200;
+    var autoTimer = null;
+    var resumeTimer = null;
+    var isPointerDown = false;
+
+    function getCards() {
+      // Only the real cards — the desktop-marquee clones are
+      // aria-hidden and display:none at this breakpoint.
+      return Array.prototype.slice.call(track.children).filter(function (el) {
+        return el.getAttribute('aria-hidden') !== 'true';
+      });
+    }
+
+    function buildDots(cards) {
+      dotsHost.innerHTML = '';
+      cards.forEach(function (_, i) {
+        var dot = document.createElement('span');
+        if (i === 0) dot.classList.add('is-active');
+        dotsHost.appendChild(dot);
+      });
+    }
+
+    function setActiveDot(index) {
+      var dots = dotsHost.children;
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.toggle('is-active', i === index);
+      }
+    }
+
+    // Position of a card within the scrollable content, independent of
+    // offsetParent quirks (offsetLeft can resolve against an ancestor
+    // far above the scroll container if nothing in between is
+    // position:relative, which would silently break this math).
+    function cardStart(card) {
+      var wrapRect = wrap.getBoundingClientRect();
+      var cardRect = card.getBoundingClientRect();
+      return (cardRect.left - wrapRect.left) + wrap.scrollLeft;
+    }
+
+    function nearestCardIndex(cards) {
+      var wrapCenter = wrap.scrollLeft + wrap.clientWidth / 2;
+      var closestIndex = 0;
+      var closestDistance = Infinity;
+      cards.forEach(function (card, i) {
+        var cardCenter = cardStart(card) + card.offsetWidth / 2;
+        var distance = Math.abs(cardCenter - wrapCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = i;
+        }
+      });
+      return closestIndex;
+    }
+
+    function scrollToCard(card) {
+      var target = cardStart(card) - (wrap.clientWidth - card.offsetWidth) / 2;
+      wrap.scrollTo({ left: target, behavior: 'smooth' });
+    }
+
+    function stopAuto() {
+      if (autoTimer) { window.clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    function startAuto(cards) {
+      stopAuto();
+      autoTimer = window.setInterval(function () {
+        if (isPointerDown) return;
+        var current = nearestCardIndex(cards);
+        var next = (current + 1) % cards.length;
+        scrollToCard(cards[next]);
+      }, AUTO_ADVANCE_MS);
+    }
+
+    function pauseForTouch(cards) {
+      isPointerDown = true;
+      stopAuto();
+      if (resumeTimer) window.clearTimeout(resumeTimer);
+    }
+
+    function resumeAfterTouch(cards) {
+      isPointerDown = false;
+      if (resumeTimer) window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(function () {
+        startAuto(cards);
+      }, RESUME_AFTER_TOUCH_MS);
+    }
+
+    function wire(cards) {
+      buildDots(cards);
+
+      dotsHost.querySelectorAll('span').forEach(function (dot, i) {
+        dot.addEventListener('click', function () {
+          scrollToCard(cards[i]);
+        });
+      });
+
+      var scrollRAF = null;
+      wrap.addEventListener('scroll', function () {
+        if (scrollRAF) window.cancelAnimationFrame(scrollRAF);
+        scrollRAF = window.requestAnimationFrame(function () {
+          setActiveDot(nearestCardIndex(cards));
+        });
+      }, { passive: true });
+
+      wrap.addEventListener('touchstart', function () { pauseForTouch(cards); }, { passive: true });
+      wrap.addEventListener('touchend', function () { resumeAfterTouch(cards); }, { passive: true });
+      wrap.addEventListener('mousedown', function () { pauseForTouch(cards); });
+      window.addEventListener('mouseup', function () { resumeAfterTouch(cards); });
+
+      startAuto(cards);
+    }
+
+    var cards = getCards();
+    if (!cards.length) return;
+    wire(cards);
+
+    // Respect reduced-motion preference: keep the swipe/dots UX but
+    // skip the automatic advancing.
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      stopAuto();
+    }
   }
 
   /* ============================================
@@ -312,6 +462,7 @@
     initSmoothScroll();
     initScrollCue();
     initReviewsCarousel();
+    initReviewsMobileCarousel();
     initFooterYear();
     hydratePlaceholders(document);
     initRevealAnimations();
