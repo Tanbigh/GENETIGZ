@@ -527,6 +527,31 @@ a.brand:hover .brand-mark,
 main{ margin-left: var(--sidebar-w); }
 
 /* ==============================================================
+   FULLSCREEN HERO SPLASH
+   First screen on load — pure edge-to-edge image, no text/overlays.
+   Breaks out of main's sidebar offset so it spans the true viewport
+   width on desktop, while staying beneath the sidebar/topbar in
+   stacking order (they have their own higher z-index already).
+============================================================== */
+.fullscreen-hero{
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh; /* better fit on mobile browser chrome */
+  margin-left: calc(-1 * var(--sidebar-w));
+  overflow: hidden;
+  background: var(--crest); /* shows briefly if image is still loading */
+}
+.fullscreen-hero-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ==============================================================
    HERO
 ============================================================== */
 .hero{
@@ -632,10 +657,9 @@ main{ margin-left: var(--sidebar-w); }
   box-shadow: none;
 }
 .hero-image.ph-image.is-loaded{
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  background-color: var(--paper-alt);
 }
 
 .spec-callout{

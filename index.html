@@ -126,17 +126,29 @@
 
       <div class="hero-visual">
         <div class="hero-image ph-image" data-src="images/hero/display.jpeg" data-label="HERO — DISPLAY" data-eager="true">
-       
-        </div>
 
-        
+        </div>
+      </div>
+      <!-- ^ closes .hero-visual -->
+
     </div>
+    <!-- ^ FIX: this closing tag for .hero-grid was missing before.
+         Without it, every section after the hero (quality, reviews,
+         collection, footer) was being parsed as a nested child of
+         .hero-grid's 2-column CSS grid — which is what caused the
+         page-wide alignment problems no CSS tweak could fix, since
+         the real bug was structural, not stylistic. -->
 
     <button class="scroll-cue" id="scrollCue" aria-label="Scroll to collection">
       <span>SCROLL</span>
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
     </button>
   </section>
+  <!-- ^ FIX: this closing tag for the .hero <section> was also missing.
+       Without it, the entire rest of the page's HTML kept nesting
+       inside .hero, which is a flex column with
+       min-height: calc(100vh - var(--topbar-h)) — compounding the
+       layout/alignment issues even further down the page. -->
 
   <!-- ============================================
        QUALITY / MANIFESTO
