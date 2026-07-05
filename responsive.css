@@ -74,15 +74,14 @@
   main{ margin-left: 0; }
 
   /* FIX 2: THE ALIGNMENT BUG.
-     .fullscreen-hero uses margin-left: calc(-1 * var(--sidebar-w)) on
+     .landing-hero uses margin-left: calc(-1 * var(--sidebar-w)) on
      desktop to break out from under main's sidebar offset. But on
      mobile, main's margin-left is reset to 0 above — there's no sidebar
-     offset left to cancel out. Without this override, the splash image
-     (and its 100vw width) was still shifting -220px left, which is
-     exactly why a blank cream gap (the body's bg color showing through)
-     appeared on the right edge in your screenshots, and why the hero
-     visual/topbar content looked squeezed/misaligned to the left. */
-  .fullscreen-hero{
+     offset left to cancel out. Without this override, the splash
+     section was still shifting left and widening past the viewport,
+     which is exactly why a blank gap and misaligned content appeared
+     on phones. */
+  .landing-hero{
     margin-left: 0;
     width: 100%;
     height: 100vh;
@@ -118,6 +117,14 @@
   .footer-social{ align-self: flex-start; }
   .loader-plate{ width: min(64vw, 240px); }
   .loader-progress{ width: min(56vw, 200px); }
+
+  /* Keep the landing-hero CTA comfortably inside the safe area on
+     small phones rather than crowding the true screen edge; still
+     reads as "bottom-left corner" of the image. */
+  .view-collection-btn{
+    left: calc(24px + env(safe-area-inset-left));
+    bottom: calc(24px + env(safe-area-inset-bottom));
+  }
 }
 
 /* ==============================================================

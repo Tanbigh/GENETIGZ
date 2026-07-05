@@ -527,28 +527,68 @@ a.brand:hover .brand-mark,
 main{ margin-left: var(--sidebar-w); }
 
 /* ==============================================================
-   FULLSCREEN HERO SPLASH
-   First screen on load — pure edge-to-edge image, no text/overlays.
-   Breaks out of main's sidebar offset so it spans the true viewport
-   width on desktop, while staying beneath the sidebar/topbar in
-   stacking order (they have their own higher z-index already).
+   LANDING HERO — first screen on load. A real <img> (never a CSS
+   background), letterboxed on a solid black field rather than
+   cropped. object-fit: contain guarantees the full composition of
+   display.jpeg is always visible — the trade-off is black bars on
+   whichever axis doesn't match the image's own aspect ratio, which
+   is intentional per spec (crop only if literally impossible any
+   other way, which contain never requires).
+   NOTHING else lives in this section besides the image and the
+   single "View Collection" CTA pinned to the bottom-left corner: no
+   text, heading, overlay, or split layout. It breaks out of main's
+   sidebar offset so it spans the true full width of the page even
+   on desktop, while the sidebar (z-index 60) and topbar (z-index 40)
+   remain visible above it since they live in their own fixed/sticky
+   stacking contexts regardless of source order.
 ============================================================== */
-.fullscreen-hero{
+.landing-hero{
   position: relative;
   z-index: 1;
-  width: 100vw;
+  /* Nested inside <main>, which carries margin-left: var(--sidebar-w).
+     This cancels that offset and adds it back to the width so the
+     section still reads as "width: 100%" of the actual page canvas,
+     not just the space left over next to the sidebar. */
+  width: calc(100% + var(--sidebar-w));
+  margin-left: calc(-1 * var(--sidebar-w));
   height: 100vh;
   height: 100svh; /* better fit on mobile browser chrome */
-  margin-left: calc(-1 * var(--sidebar-w));
+  background: #000;
   overflow: hidden;
-  background: var(--crest); /* shows briefly if image is still loading */
 }
-.fullscreen-hero-img{
+.landing-hero-image{
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
   display: block;
+}
+/* The single CTA allowed on the landing hero — pinned to the
+   bottom-left corner, 50px from each edge. Carries the same visual
+   treatment as .btn-primary (font, size, colors, hover lift) so it
+   matches the existing "View Collection" button used later in
+   .hero-actions, just under its own class name per spec. */
+.view-collection-btn{
+  position: absolute;
+  left: 50px;
+  bottom: 50px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  padding: 16px 27px;
+  border: 1px solid var(--accent);
+  transition: transform .3s var(--ease), background .3s var(--ease), box-shadow .3s var(--ease);
+}
+.view-collection-btn:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(122,38,50,0.2);
 }
 
 /* ==============================================================

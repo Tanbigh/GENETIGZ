@@ -103,7 +103,25 @@
 <main id="top">
 
   <!-- ============================================
+       LANDING HERO — first screen on load. A real <img> element
+       (no CSS background-image), letterboxed on solid black rather
+       than cropped, so the full composition of display.jpeg always
+       stays visible. Nothing else lives here except the navbar
+       (already fixed/sticky above, in its own stacking context) and
+       a single "View Collection" CTA pinned to the bottom-left
+       corner. No text, heading, overlay, gradient, or product
+       content here by design — that all lives in the existing .hero
+       section immediately below, unchanged.
+  ============================================= -->
+  <section class="landing-hero" id="landingHero">
+    <img src="images/hero/display.jpeg" class="landing-hero-image" alt="GENETIGZ — engineered streetwear" loading="eager">
+    <a href="#hero" class="view-collection-btn" data-scroll="#hero">VIEW COLLECTION</a>
+  </section>
+
+  <!-- ============================================
        HERO — FEATURED PRODUCT
+       (unchanged — this is the existing homepage content that now
+       simply appears one viewport down, after the fullscreen hero)
   ============================================= -->
   <section class="hero" id="hero">
     <div class="hero-grid">
