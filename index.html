@@ -19,6 +19,7 @@
 <!-- Styles -->
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="responsive.css">
+<link rel="stylesheet" href="collections.css">
 </head>
 <body>
 
@@ -244,9 +245,17 @@
     </div>
 
     <div class="product-grid" id="productGrid">
-      <!-- Product cards injected by js/products.js -->
+      <!-- Product cards injected by products.js -->
     </div>
   </section>
+
+  <!-- ============================================
+       COLLECTIONS (Animeverse, and future drops)
+       Populated by collections.js, in the order set by
+       data/collections-index.js. Nothing here needs to change
+       when a new collection is added.
+  ============================================= -->
+  <div id="collectionsHost"></div>
 
   <!-- ============================================
        FOOTER
@@ -355,8 +364,10 @@
 </div>
 
 <!-- Scripts -->
-<script src="js/products.js"></script>
-<script src="js/modal.js"></script>
+<script src="products.js"></script>
+<script src="data/collections-index.js"></script>
+<script src="collections.js"></script>
+<script src="modal.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

@@ -39,7 +39,16 @@
     document.getElementById('modalNotes').textContent = product.notes;
 
     setImage(document.getElementById('modalFrontImage'), product.images.front, product.code, 'FRONT');
-    setImage(document.getElementById('modalBackImage'), product.images.back, product.code, 'BACK');
+
+    var backWrap = document.getElementById('modalBackImage') ? document.getElementById('modalBackImage').closest('.modal-image-wrap') : null;
+    if (product.images.back) {
+      setImage(document.getElementById('modalBackImage'), product.images.back, product.code, 'BACK');
+      if (backWrap) backWrap.style.display = '';
+    } else if (backWrap) {
+      // Single-image product (e.g. no separate back photo yet) — hide the
+      // second panel instead of showing a broken/placeholder back image.
+      backWrap.style.display = 'none';
+    }
 
     var waLink = document.getElementById('modalWhatsapp');
     if (waLink){
@@ -81,19 +90,20 @@
   }
 
   function initCardTriggers(){
-    // Event delegation: product cards are re-rendered whenever the
-    // category changes, so we listen on the grid container instead
-    // of binding to individual cards.
-    var grid = document.getElementById('productGrid');
-    if (!grid) return;
-
-    grid.addEventListener('click', function (e) {
+    // Event delegation on the document: product cards are re-rendered
+    // whenever the category changes (js/products.js) and collection
+    // sections are rendered separately into their own grids
+    // (collections.js), so we listen once at the document level rather
+    // than binding to a single grid container. Behavior for the
+    // existing #productGrid cards is unchanged — document-level
+    // delegation still catches every click/keydown inside it.
+    document.addEventListener('click', function (e) {
       var card = e.target.closest('.product-card');
       if (!card) return;
       openModal(card.getAttribute('data-id'));
     });
 
-    grid.addEventListener('keydown', function (e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       var card = e.target.closest('.product-card');
       if (!card) return;

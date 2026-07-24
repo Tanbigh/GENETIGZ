@@ -1,0 +1,21 @@
+/* ==============================================================
+   GENETIGZ — COLLECTIONS (additive, minimal)
+   Every collection section reuses your existing .collection,
+   .collection-head, .eyebrow, .collection-title, .collection-sub,
+   .product-grid and .product-card classes from style.css as-is —
+   nothing here redefines them. This file only adds the couple of
+   things that don't already exist: a divider between stacked
+   collection sections, and a centered wrapper for the "View
+   Collection" button (which itself reuses the existing
+   .btn-primary/.btn-collection styles).
+============================================================== */
+
+.collection-section{
+  border-top: 1px solid var(--line);
+}
+
+.collection-cta{
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}

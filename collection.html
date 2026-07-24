@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Collection — GENETIGZ</title>
+<meta name="description" content="GENETIGZ — engineered fabric, coded silhouettes. Premium streetwear built to spec.">
+<meta name="theme-color" content="#f8f3e8">
+
+<!-- Icons -->
+<link rel="icon" type="image/png" href="images/logo/logo-mark-180.png">
+<link rel="apple-touch-icon" href="images/logo/logo-mark-180.png">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+
+<!-- Styles (identical to index.html, plus the small additive collections.css) -->
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="responsive.css">
+<link rel="stylesheet" href="collections.css">
+</head>
+<body>
+
+<!-- Loading screen — identical to index.html -->
+<div id="loader" class="loader" role="status" aria-live="polite">
+  <div class="loader-inner">
+    <div class="loader-plate corner-framed">
+      <img class="loader-plate-img" src="images/logo/logo-full.png" alt="GENETIGZ — Wear Your Story" width="665" height="560">
+    </div>
+    <div class="loader-progress">
+      <div class="loader-progress-fill"></div>
+    </div>
+    <div class="loader-meta">
+      <span class="loader-meta-code">SEQ. 001</span>
+      <span class="loader-meta-sep">/</span>
+      <span>STREETWEAR ENGINEERED</span>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar — identical styling to index.html. The category links here
+     point back to the homepage catalog (this page has no category
+     filter of its own — it's a single collection), so they're plain
+     links instead of the JS-driven category buttons used on index.html. -->
+<nav id="sidebar" class="sidebar" aria-label="Product categories">
+  <div class="sidebar-top">
+    <a href="index.html#top" class="sidebar-logo" aria-label="GENETIGZ — back to home">
+      <span class="sidebar-logo-mark">
+        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+    </a>
+  </div>
+
+  <ul class="sidebar-list">
+    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">01</span><span class="sb-label">T&#8209;Shirt</span></a></li>
+    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">02</span><span class="sb-label">Polo</span></a></li>
+    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">03</span><span class="sb-label">Baggy Tee</span></a></li>
+    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">04</span><span class="sb-label">Tank Top</span></a></li>
+  </ul>
+
+  <div class="sidebar-bottom">
+    <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
+       class="sidebar-customize" target="_blank" rel="noopener">
+      <span>Customize</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- Mobile nav toggle — identical to index.html -->
+<button id="navToggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+  <span></span><span></span><span></span>
+</button>
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- Topbar — identical to index.html -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html#top" class="brand">
+      <span class="brand-mark">
+        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+      <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+    </a>
+    <div class="topbar-tag">ENGINEERED STREETWEAR — BATCH 01</div>
+    <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
+       class="btn-customize" target="_blank" rel="noopener">
+      Customize
+    </a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- Single collection — same section/head/grid classes as every
+       collection block on the homepage, just with a "back" link. -->
+  <section class="collection" id="collectionPage" style="padding-top: 80px;">
+    <div class="collection-head" id="collectionPageHead">
+      <p class="eyebrow"><a href="index.html#collectionsHost" style="color:inherit;">← ALL COLLECTIONS</a></p>
+      <h2 class="collection-title" id="collectionPageTitle">Loading…</h2>
+      <p class="collection-sub" id="collectionPageSub"></p>
+      <p class="collection-sub" id="collectionPageDesc" style="display:none;"></p>
+    </div>
+
+    <div class="product-grid" id="collectionGrid">
+      <!-- Product cards injected by collection.html's own script below -->
+    </div>
+  </section>
+
+  <!-- Footer — identical to index.html -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="brand">
+          <span class="brand-mark"><img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="lazy"></span>
+          <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+        </span>
+        <p>Engineered streetwear.<br>Designed, tested, and shipped from India.</p>
+        <div class="footer-social" aria-label="Genetigz on social media">
+          <a href="https://wa.me/918145532620" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.5 11.9a8.4 8.4 0 0 1-12.3 7.4L4 20.5l1.3-4a8.4 8.4 0 1 1 15.2-4.6Z"/><path d="M8.7 8.5c.2-.5.5-.5.8-.5h.5c.2 0 .4 0 .6.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c-.1.2-.1.3 0 .5.5.9 1.5 1.8 2.4 2.2.2.1.3.1.5-.1l.5-.6c.2-.2.4-.2.6-.1l1.6.8c.3.1.4.3.4.5v.5c0 .3-.4 1-1 1.2-.6.2-1.2.3-2.1-.1a7 7 0 0 1-4.2-4.2c-.3-.8-.3-1.5 0-2.2Z"/></svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Genetigz on Instagram">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.4"/><circle cx="16.6" cy="7.4" r="1"/></svg>
+          </a>
+          <a href="https://x.com" target="_blank" rel="noopener" aria-label="Genetigz on X">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4l16 16M20 4L4 20"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Catalog</h4>
+        <a href="index.html#collection">T-Shirt</a>
+        <a href="index.html#collection">Polo</a>
+        <a href="index.html#collection">Baggy Tee</a>
+        <a href="index.html#collection">Tank Top</a>
+      </div>
+      <div class="footer-col">
+        <h4>Order</h4>
+        <a href="https://wa.me/918145532620" target="_blank" rel="noopener">WhatsApp — +91 81455 32620</a>
+        <a href="index.html#top">Back to top</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> <span class="brand-word">GENETIGZ</span>. All rights reserved.</span>
+      <span class="footer-code">GZ // FW26 // ALL SYSTEMS NOMINAL</span>
+    </div>
+  </footer>
+
+</main>
+
+<!-- Product modal — identical markup to index.html, shared behavior via modal.js -->
+<div id="productModal" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalProductName">
+    <button class="modal-close" id="modalClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </button>
+
+    <div class="modal-body">
+      <div class="modal-visuals">
+        <div class="modal-image-wrap">
+          <div class="modal-image ph-image" id="modalFrontImage" data-label="FRONT VIEW">
+            <span class="ph-tag">FRONT — IMG PENDING</span>
+          </div>
+          <span class="modal-view-label">FRONT</span>
+        </div>
+        <div class="modal-image-wrap">
+          <div class="modal-image ph-image" id="modalBackImage" data-label="BACK VIEW">
+            <span class="ph-tag">BACK — IMG PENDING</span>
+          </div>
+          <span class="modal-view-label">BACK</span>
+        </div>
+      </div>
+
+      <div class="modal-info">
+        <p class="modal-code" id="modalCode">GZ-000</p>
+        <h3 class="modal-name" id="modalProductName">Product Name</h3>
+
+        <dl class="modal-specs">
+          <div class="spec-row"><dt>Fabric</dt><dd id="modalFabric">—</dd></div>
+          <div class="spec-row"><dt>Available Sizes</dt><dd id="modalSizes">—</dd></div>
+          <div class="spec-row"><dt>Available Colors</dt><dd id="modalColors">—</dd></div>
+          <div class="spec-row"><dt>Print Area</dt><dd id="modalPrintArea">—</dd></div>
+          <div class="spec-row"><dt>Notes</dt><dd id="modalNotes">—</dd></div>
+        </dl>
+
+        <a href="#" id="modalWhatsapp" class="btn-primary btn-whatsapp" target="_blank" rel="noopener">
+          Order on WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts: same core scripts as index.html (loader, mobile sidebar,
+     lazy-image hydration, footer year, modal) plus collections.js for
+     its shared card/reveal helpers. products.js is intentionally not
+     included here — this page has no category grid. -->
+<script src="collections.js"></script>
+<script src="modal.js"></script>
+<script src="script.js"></script>
+
+<!-- This page's own small script: reads ?slug= from the URL, loads
+     that one collection's data file, and renders its grid. This is
+     the only page-specific logic — everything else above is reused
+     site chrome. -->
+<script>
+(function () {
+  'use strict';
+
+  function getSlug() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get('slug');
+  }
+
+  function renderNotFound() {
+    var titleEl = document.getElementById('collectionPageTitle');
+    var subEl = document.getElementById('collectionPageSub');
+    var grid = document.getElementById('collectionGrid');
+    if (titleEl) titleEl.textContent = 'Collection not found';
+    if (subEl) subEl.textContent = 'This collection link is missing or invalid.';
+    if (grid) grid.innerHTML = '<div class="product-empty">NO COLLECTION MATCHES THIS LINK.</div>';
+  }
+
+  function renderCollection(collection) {
+    document.title = collection.name + ' — GENETIGZ';
+
+    document.getElementById('collectionPageTitle').textContent = collection.name;
+
+    var count = collection.products.length;
+    document.getElementById('collectionPageSub').textContent =
+      String(count).padStart(2, '0') + (count === 1 ? ' piece' : ' pieces') + ' in this collection.';
+
+    if (collection.description) {
+      var descEl = document.getElementById('collectionPageDesc');
+      descEl.textContent = collection.description;
+      descEl.style.display = '';
+    }
+
+    var grid = document.getElementById('collectionGrid');
+    grid.innerHTML = '';
+    collection.products.forEach(function (product, i) {
+      var card = window.GZ.buildCollectionCard(product);
+      card.style.animationDelay = (i * 70) + 'ms';
+      grid.appendChild(card);
+    });
+
+    if (window.GZ.registerCollectionProducts) window.GZ.registerCollectionProducts([collection]);
+    if (window.GZ.hydratePlaceholders) window.GZ.hydratePlaceholders(grid);
+    if (window.GZ.applyCollectionsReveal) window.GZ.applyCollectionsReveal(document.getElementById('collectionPage'));
+  }
+
+  function init() {
+    var slug = getSlug();
+    if (!slug) { renderNotFound(); return; }
+
+    window.GZ.loadCollectionScript('data/' + slug + '.js').then(function () {
+      var match = (window.GZ_COLLECTIONS || []).filter(function (c) { return c.slug === slug; })[0];
+      if (!match) { renderNotFound(); return; }
+      renderCollection(match);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

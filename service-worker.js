@@ -16,7 +16,7 @@
    are cleared out on the next visit.
 ============================================== */
 
-const CACHE_VERSION = 'genetigz-v1';
+const CACHE_VERSION = 'genetigz-v2';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -24,10 +24,12 @@ const APP_SHELL = [
   '/',
   '/index.html',
   '/style.css',
-  '/css/responsive.css',
+  '/responsive.css',
   '/script.js',
-  '/js/products.js',
-  '/js/modal.js',
+  '/products.js',
+  '/modal.js',
+  '/collections.css',
+  '/collections.js',
   '/manifest.json',
   '/offline.html',
   '/images/logo/logo-mark-180.png',
