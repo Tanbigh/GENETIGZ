@@ -15,5 +15,6 @@
 ============================================================== */
 
 window.GZ_COLLECTIONS_INDEX = [
-  'animeverse'
+  'animeverse',
+  'bloomytales'
 ];

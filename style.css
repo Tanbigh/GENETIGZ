@@ -1068,6 +1068,7 @@ main{ margin-left: var(--sidebar-w); }
   width: 100%;
   max-height: 88vh;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   transform: scale(0.95) translateY(14px);
   transition: transform .45s var(--ease);
@@ -1088,10 +1089,28 @@ main{ margin-left: var(--sidebar-w); }
 }
 .modal-close:hover{ border-color: var(--accent); color: var(--accent); transform: rotate(90deg); }
 
-.modal-body{ display: grid; grid-template-columns: 1.1fr 1fr; }
+/* FIX: modal-body previously split 1.1fr / 1fr with no minmax(0, ...) guard,
+   so the visuals column could grow past its intended share and crowd out
+   modal-info. Explicit minmax(0, ...) tracks stop that blowout, and the
+   ratio now favors the info column slightly so specs always have room. */
+.modal-body{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  min-width: 0;
+}
 
-.modal-visuals{ display: grid; grid-template-columns: 1fr 1fr; }
-.modal-image-wrap{ position: relative; aspect-ratio: 3/4; }
+.modal-visuals{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-width: 0;
+  /* Caps how wide the visuals column can get on very wide desktop modals,
+     so it never dominates the layout even as .modal grows toward 980px. */
+  max-width: 460px;
+}
+/* Single-photo products (no back image) get one full-width image instead
+   of leaving an empty second grid track reserved next to it. */
+.modal-visuals.is-single{ grid-template-columns: 1fr; max-width: 320px; }
+.modal-image-wrap{ position: relative; aspect-ratio: 3/4; min-width: 0; }
 .modal-image{ width: 100%; height: 100%; border-radius: 0; }
 .modal-view-label{
   position: absolute;
@@ -1105,7 +1124,11 @@ main{ margin-left: var(--sidebar-w); }
   z-index: 3;
 }
 
-.modal-info{ padding: 42px 38px; }
+.modal-info{
+  padding: 42px 38px;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
 .modal-code{
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -1120,10 +1143,10 @@ main{ margin-left: var(--sidebar-w); }
   margin: 0 0 28px;
   color: var(--ink);
 }
-.modal-specs{ margin: 0 0 32px; }
+.modal-specs{ margin: 0 0 32px; min-width: 0; }
 .spec-row{
   display: grid;
-  grid-template-columns: 140px 1fr;
+  grid-template-columns: minmax(96px, 140px) minmax(0, 1fr);
   gap: 12px;
   padding: 13px 0;
   border-top: 1px solid var(--line);
@@ -1137,7 +1160,7 @@ main{ margin-left: var(--sidebar-w); }
   text-transform: uppercase;
   margin: 0;
 }
-.spec-row dd{ margin: 0; font-size: 14px; color: var(--ink); font-weight: 300; }
+.spec-row dd{ margin: 0; font-size: 14px; color: var(--ink); font-weight: 300; overflow-wrap: break-word; }
 
 .btn-whatsapp{ width: 100%; justify-content: center; }
 

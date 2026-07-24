@@ -41,13 +41,19 @@
     setImage(document.getElementById('modalFrontImage'), product.images.front, product.code, 'FRONT');
 
     var backWrap = document.getElementById('modalBackImage') ? document.getElementById('modalBackImage').closest('.modal-image-wrap') : null;
+    var visuals = modal ? modal.querySelector('.modal-visuals') : null;
     if (product.images.back) {
       setImage(document.getElementById('modalBackImage'), product.images.back, product.code, 'BACK');
       if (backWrap) backWrap.style.display = '';
+      if (visuals) visuals.classList.remove('is-single');
     } else if (backWrap) {
       // Single-image product (e.g. no separate back photo yet) — hide the
       // second panel instead of showing a broken/placeholder back image.
       backWrap.style.display = 'none';
+      // Layout fix: without this, .modal-visuals keeps its 2-column track
+      // and the lone front image only fills half the column, leaving a
+      // dead gap next to it instead of the image resizing to fit.
+      if (visuals) visuals.classList.add('is-single');
     }
 
     var waLink = document.getElementById('modalWhatsapp');
