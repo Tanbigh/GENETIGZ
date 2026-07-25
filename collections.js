@@ -19,6 +19,12 @@
 (function () {
   'use strict';
 
+  // Homepage previews only ever show a taste of each collection — the
+  // full set lives one click away on collection.html (which now renders
+  // every collection via its own sidebar + gallery browser). Keeps the
+  // homepage from growing a new full-length section per drop.
+  var HOME_PREVIEW_LIMIT = 4;
+
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
       var s = document.createElement('script');
@@ -91,13 +97,23 @@
       head.appendChild(sub);
     }
 
+    var total = collection.products.length;
+    var shown = Math.min(total, HOME_PREVIEW_LIMIT);
+    if (total > shown) {
+      var count = document.createElement('p');
+      count.className = 'collection-count';
+      count.textContent = 'Showing ' + shown + ' of ' + String(total).padStart(2, '0') + ' pieces.';
+      head.appendChild(count);
+    }
+
     section.appendChild(head);
 
     var grid = document.createElement('div');
     grid.className = 'product-grid';
     grid.id = 'grid-' + collection.slug;
 
-    collection.products.forEach(function (product, i) {
+    var previewProducts = collection.products.slice(0, HOME_PREVIEW_LIMIT);
+    previewProducts.forEach(function (product, i) {
       var card = buildCard(product);
       card.style.animationDelay = (i * 70) + 'ms';
       grid.appendChild(card);

@@ -16,20 +16,27 @@
    are cleared out on the next visit.
 ============================================== */
 
-const CACHE_VERSION = 'genetigz-v3';
+const CACHE_VERSION = 'genetigz-v4';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
 const APP_SHELL = [
   '/',
   '/index.html',
+  '/collection.html',
   '/style.css',
   '/responsive.css',
   '/script.js',
-  '/products.js',
   '/modal.js',
   '/collections.css',
   '/collections.js',
+  '/data/collections-index.js',
+  '/data/animeverse.js',
+  '/data/bloomytales.js',
+  '/data/lonewolf.js',
+  '/data/outliers.js',
+  '/data/typewriter.js',
+  '/data/vagabond.js',
   '/manifest.json',
   '/offline.html',
   '/images/logo/logo-mark-180.png',

@@ -94,18 +94,42 @@
 
 <main id="top">
 
-  <!-- Single collection — same section/head/grid classes as every
-       collection block on the homepage, just with a "back" link. -->
-  <section class="collection" id="collectionPage" style="padding-top: 80px;">
-    <div class="collection-head" id="collectionPageHead">
-      <p class="eyebrow"><a href="index.html#collectionsHost" style="color:inherit;">← ALL COLLECTIONS</a></p>
-      <h2 class="collection-title" id="collectionPageTitle">Loading…</h2>
-      <p class="collection-sub" id="collectionPageSub"></p>
-      <p class="collection-sub" id="collectionPageDesc" style="display:none;"></p>
+  <!-- Collections Browser — sidebar list on the left, selected
+       collection's gallery on the right. Only the selected collection's
+       products are ever rendered into #collectionsGalleryPanel; nothing
+       else is mounted to the DOM simultaneously. Reuses .collection /
+       .collection-head / .product-grid / .product-card as-is. -->
+  <section class="collection" id="collectionsBrowser" style="padding-top: 80px;">
+    <div class="collection-head">
+      <p class="eyebrow"><a href="index.html#collection" style="color:inherit;">← BACK TO HOME</a></p>
+      <h2 class="collection-title">All Collections</h2>
+      <p class="collection-sub">Pick a collection from the list to view its full gallery.</p>
     </div>
 
-    <div class="product-grid" id="collectionGrid">
-      <!-- Product cards injected by collection.html's own script below -->
+    <div class="collections-layout">
+
+      <!-- Mobile horizontal selector — swaps in for the sidebar below 900px -->
+      <div class="collections-tabs" id="collectionsTabs" role="tablist" aria-label="Collections"></div>
+
+      <!-- Sidebar list — desktop always visible, tablet collapsible -->
+      <nav class="collections-sidebar" id="collectionsSidebar" aria-label="Collections list">
+        <button class="collections-sidebar-toggle" id="collectionsSidebarToggle" type="button" aria-expanded="true">
+          <span>Collections</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <ul class="collections-sidebar-list" id="collectionsSidebarList">
+          <!-- Populated by the script below: "All Collections" + one entry per collection -->
+        </ul>
+      </nav>
+
+      <!-- Selected collection's gallery -->
+      <div class="collections-gallery" id="collectionsGallery">
+        <div class="collections-gallery-panel" id="collectionsGalleryPanel">
+          <div class="collections-gallery-head" id="collectionsGalleryHead"></div>
+          <div class="product-grid" id="collectionsGalleryGrid"></div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -198,68 +222,199 @@
      lazy-image hydration, footer year, modal) plus collections.js for
      its shared card/reveal helpers. products.js is intentionally not
      included here — this page has no category grid. -->
+<script src="data/collections-index.js"></script>
 <script src="collections.js"></script>
 <script src="modal.js"></script>
 <script src="script.js"></script>
 
-<!-- This page's own small script: reads ?slug= from the URL, loads
-     that one collection's data file, and renders its grid. This is
-     the only page-specific logic — everything else above is reused
-     site chrome. -->
+<!-- This page's own script: loads every collection's data file (so the
+     sidebar/tabs can list them all), then renders ONLY the selected
+     collection's products into the gallery pane — never every collection
+     at once. Switching collections fades/slides the panel, updates the
+     highlighted sidebar entry, and syncs the URL's ?slug= so the "View
+     Collection" links from the homepage land pre-selected. -->
 <script>
 (function () {
   'use strict';
 
-  function getSlug() {
+  var ALL_SLUG = 'all';
+  var state = { collections: [], bySlug: {}, active: ALL_SLUG };
+
+  function getRequestedSlug() {
     var params = new URLSearchParams(window.location.search);
     return params.get('slug');
   }
 
-  function renderNotFound() {
-    var titleEl = document.getElementById('collectionPageTitle');
-    var subEl = document.getElementById('collectionPageSub');
-    var grid = document.getElementById('collectionGrid');
-    if (titleEl) titleEl.textContent = 'Collection not found';
-    if (subEl) subEl.textContent = 'This collection link is missing or invalid.';
-    if (grid) grid.innerHTML = '<div class="product-empty">NO COLLECTION MATCHES THIS LINK.</div>';
+  function setUrlSlug(slug) {
+    var url = new URL(window.location.href);
+    if (slug === ALL_SLUG) url.searchParams.delete('slug');
+    else url.searchParams.set('slug', slug);
+    window.history.replaceState({}, '', url);
   }
 
-  function renderCollection(collection) {
-    document.title = collection.name + ' — GENETIGZ';
+  function allProducts() {
+    var combined = [];
+    state.collections.forEach(function (c) {
+      c.products.forEach(function (p) { combined.push(p); });
+    });
+    return combined;
+  }
 
-    document.getElementById('collectionPageTitle').textContent = collection.name;
+  function buildSidebarEntry(slug, label, count, isTab) {
+    var el = document.createElement(isTab ? 'button' : 'li');
+    var btn = isTab ? el : document.createElement('button');
 
-    var count = collection.products.length;
-    document.getElementById('collectionPageSub').textContent =
-      String(count).padStart(2, '0') + (count === 1 ? ' piece' : ' pieces') + ' in this collection.';
+    btn.type = 'button';
+    btn.className = isTab ? 'collections-tab' : 'collections-sidebar-link';
+    btn.setAttribute('data-slug', slug);
+    if (isTab) btn.setAttribute('role', 'tab');
 
-    if (collection.description) {
-      var descEl = document.getElementById('collectionPageDesc');
-      descEl.textContent = collection.description;
-      descEl.style.display = '';
+    if (isTab) {
+      btn.textContent = label;
+    } else {
+      var labelSpan = document.createElement('span');
+      labelSpan.className = 'cs-label';
+      labelSpan.textContent = label;
+      var countSpan = document.createElement('span');
+      countSpan.className = 'cs-count';
+      countSpan.textContent = String(count).padStart(2, '0');
+      btn.appendChild(labelSpan);
+      btn.appendChild(countSpan);
+      el.appendChild(btn);
     }
 
-    var grid = document.getElementById('collectionGrid');
-    grid.innerHTML = '';
-    collection.products.forEach(function (product, i) {
-      var card = window.GZ.buildCollectionCard(product);
-      card.style.animationDelay = (i * 70) + 'ms';
-      grid.appendChild(card);
-    });
+    btn.addEventListener('click', function () { selectCollection(slug); });
+    return el;
+  }
 
-    if (window.GZ.registerCollectionProducts) window.GZ.registerCollectionProducts([collection]);
+  function renderSidebarAndTabs() {
+    var sidebarList = document.getElementById('collectionsSidebarList');
+    var tabs = document.getElementById('collectionsTabs');
+    sidebarList.innerHTML = '';
+    tabs.innerHTML = '';
+
+    var total = allProducts().length;
+    sidebarList.appendChild(buildSidebarEntry(ALL_SLUG, 'All Collections', total, false));
+    tabs.appendChild(buildSidebarEntry(ALL_SLUG, 'All Collections', total, true));
+
+    state.collections.forEach(function (c) {
+      sidebarList.appendChild(buildSidebarEntry(c.slug, c.name, c.products.length, false));
+      tabs.appendChild(buildSidebarEntry(c.slug, c.name, c.products.length, true));
+    });
+  }
+
+  function syncActiveHighlight() {
+    document.querySelectorAll('.collections-sidebar-link, .collections-tab').forEach(function (el) {
+      el.classList.toggle('is-active', el.getAttribute('data-slug') === state.active);
+    });
+  }
+
+  function renderGalleryContent() {
+    var head = document.getElementById('collectionsGalleryHead');
+    var grid = document.getElementById('collectionsGalleryGrid');
+    var panel = document.getElementById('collectionsGalleryPanel');
+
+    var products, title, sub;
+
+    if (state.active === ALL_SLUG) {
+      products = allProducts();
+      title = 'All Collections';
+      sub = String(products.length).padStart(2, '0') + (products.length === 1 ? ' piece' : ' pieces') + ' across every drop.';
+      document.title = 'All Collections — GENETIGZ';
+    } else {
+      var collection = state.bySlug[state.active];
+      if (!collection) {
+        head.innerHTML = '';
+        grid.innerHTML = '<div class="product-empty">NO COLLECTION MATCHES THIS LINK.</div>';
+        return;
+      }
+      products = collection.products;
+      title = collection.name;
+      sub = String(products.length).padStart(2, '0') + (products.length === 1 ? ' piece' : ' pieces') + ' in this collection.';
+      document.title = collection.name + ' — GENETIGZ';
+    }
+
+    head.innerHTML = '';
+    var eyebrow = document.createElement('p');
+    eyebrow.className = 'eyebrow';
+    eyebrow.textContent = 'COLLECTION';
+    var titleEl = document.createElement('h3');
+    titleEl.className = 'collection-title';
+    titleEl.style.fontSize = 'clamp(1.7rem, 3vw, 2.3rem)';
+    titleEl.textContent = title;
+    var subEl = document.createElement('p');
+    subEl.className = 'collection-sub';
+    subEl.textContent = sub;
+    head.appendChild(eyebrow);
+    head.appendChild(titleEl);
+    head.appendChild(subEl);
+
+    grid.innerHTML = '';
+    if (!products.length) {
+      var empty = document.createElement('div');
+      empty.className = 'product-empty';
+      empty.textContent = 'NO PIECES LOGGED IN THIS COLLECTION YET.';
+      grid.appendChild(empty);
+    } else {
+      products.forEach(function (product, i) {
+        var card = window.GZ.buildCollectionCard(product);
+        card.style.animationDelay = (Math.min(i, 12) * 60) + 'ms';
+        grid.appendChild(card);
+      });
+    }
+
     if (window.GZ.hydratePlaceholders) window.GZ.hydratePlaceholders(grid);
-    if (window.GZ.applyCollectionsReveal) window.GZ.applyCollectionsReveal(document.getElementById('collectionPage'));
+    if (window.GZ.applyCollectionsReveal) window.GZ.applyCollectionsReveal(panel);
+  }
+
+  function selectCollection(slug) {
+    if (slug === state.active) return;
+    state.active = slug;
+    syncActiveHighlight();
+    setUrlSlug(slug);
+
+    var panel = document.getElementById('collectionsGalleryPanel');
+    panel.classList.add('is-switching');
+
+    window.setTimeout(function () {
+      renderGalleryContent();
+      // Force reflow so the fade-back-in transition actually replays.
+      void panel.offsetWidth;
+      panel.classList.remove('is-switching');
+    }, 300);
   }
 
   function init() {
-    var slug = getSlug();
-    if (!slug) { renderNotFound(); return; }
+    var slugs = window.GZ_COLLECTIONS_INDEX || [];
 
-    window.GZ.loadCollectionScript('data/' + slug + '.js').then(function () {
-      var match = (window.GZ_COLLECTIONS || []).filter(function (c) { return c.slug === slug; })[0];
-      if (!match) { renderNotFound(); return; }
-      renderCollection(match);
+    Promise.all(slugs.map(function (slug) {
+      return window.GZ.loadCollectionScript('data/' + slug + '.js');
+    })).then(function () {
+      state.collections = slugs
+        .map(function (slug) {
+          return (window.GZ_COLLECTIONS || []).filter(function (c) { return c.slug === slug; })[0];
+        })
+        .filter(Boolean);
+
+      state.collections.forEach(function (c) { state.bySlug[c.slug] = c; });
+
+      if (window.GZ.registerCollectionProducts) window.GZ.registerCollectionProducts(state.collections);
+
+      var requested = getRequestedSlug();
+      state.active = (requested && state.bySlug[requested]) ? requested : ALL_SLUG;
+
+      renderSidebarAndTabs();
+      syncActiveHighlight();
+      renderGalleryContent();
+
+      var toggle = document.getElementById('collectionsSidebarToggle');
+      var sidebar = document.getElementById('collectionsSidebar');
+      if (toggle && sidebar) {
+        toggle.addEventListener('click', function () {
+          var collapsed = sidebar.classList.toggle('is-collapsed');
+          toggle.setAttribute('aria-expanded', String(!collapsed));
+        });
+      }
     });
   }
 

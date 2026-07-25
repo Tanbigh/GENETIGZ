@@ -227,35 +227,25 @@
   </section>
 
   <!-- ============================================
-       PRODUCT COLLECTION
-  ============================================= -->
-  <section class="collection" id="collection">
-    <div class="collection-head">
-      <p class="eyebrow">CATALOG</p>
-      <h2 class="collection-title" id="collectionTitle">T-Shirts</h2>
-      <p class="collection-sub" id="collectionSub">04 silhouettes currently in rotation.</p>
-    </div>
-
-    <!-- Category tabs (mirrors sidebar for mobile / in-flow access) -->
-    <div class="collection-tabs" role="tablist" aria-label="Product categories">
-      <button class="tab active" data-category="tshirt">T-Shirt</button>
-      <button class="tab" data-category="polo">Polo</button>
-      <button class="tab" data-category="baggy">Baggy Tee</button>
-      <button class="tab" data-category="tanktop">Tank Top</button>
-    </div>
-
-    <div class="product-grid" id="productGrid">
-      <!-- Product cards injected by products.js -->
-    </div>
-  </section>
-
-  <!-- ============================================
-       COLLECTIONS (Animeverse, and future drops)
+       COLLECTIONS (Animeverse, Bloomy Tales, Lone Wolf, Outliers,
+       Type Writer, Vagabond — and future drops)
        Populated by collections.js, in the order set by
        data/collections-index.js. Nothing here needs to change
        when a new collection is added.
+
+       id="collection" lives on this wrapper (moved here from the old
+       placeholder Catalog section, which has been removed since every
+       one of its "products" was an unphotographed demo item — the
+       blank/shimmer T-shirt cards). Keeping the id here means the
+       hero's "View Collection" button, the scroll-cue, and the
+       sidebar/footer catalog links all keep working exactly as before,
+       with zero changes needed to the hero, sidebar, or footer markup.
+       Each homepage section below shows a 4-item preview with a
+       "View Collection" button to the full gallery on collection.html.
   ============================================= -->
-  <div id="collectionsHost"></div>
+  <div id="collection">
+    <div id="collectionsHost"></div>
+  </div>
 
   <!-- ============================================
        FOOTER
@@ -364,7 +354,6 @@
 </div>
 
 <!-- Scripts -->
-<script src="products.js"></script>
 <script src="data/collections-index.js"></script>
 <script src="collections.js"></script>
 <script src="modal.js"></script>
