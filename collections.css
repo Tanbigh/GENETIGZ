@@ -59,6 +59,16 @@
   margin-top: 48px;
 }
 
+/* Homepage-level "View All Collections" CTA — sits after every stacked
+   collection preview, so it needs a bit more breathing room above it
+   than the per-collection "View Collection" button does. Spacing-only
+   modifier; still the same .btn-primary/.btn-collection button. */
+.collection-cta--all{
+  margin-top: 64px;
+  padding-top: 48px;
+  border-top: 1px solid var(--line);
+}
+
 /* Homepage preview meta line — "Showing 4 of 09 pieces." Sits under
    the existing .collection-sub description using the same type scale. */
 .collection-count{
