@@ -160,6 +160,133 @@
     });
   }
 
+  /* ----------------------------------------------------------------
+     PERSISTENT LEFT SIDEBAR — dynamic collection nav
+     Populates the site's persistent #sidebar (id="sidebarList") with
+     one entry per real collection, in the same order as everywhere
+     else (data/collections-index.js). Two modes:
+
+       'scroll' — used on index.html. Clicking a link smooth-scrolls
+                  to that collection's <section id="collection-<slug>">
+                  on the same page; an IntersectionObserver keeps the
+                  active item (and its left indicator bar) in sync
+                  while the user scrolls manually.
+
+       'link'   — used on collection.html, which has no per-collection
+                  sections of its own (it renders one selected
+                  collection into a single gallery pane). Here each
+                  entry is a plain link to collection.html?slug=<slug>,
+                  reusing that page's existing ?slug= handling.
+
+     Reuses the exact .sidebar-link / .sb-code / .sb-label / .active
+     markup and CSS already defined in style.css for the old hardcoded
+     category buttons — nothing about that styling changes.
+  ---------------------------------------------------------------- */
+
+  function closeMobileSidebarIfOpen() {
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var toggle = document.getElementById('navToggle');
+    if (!sidebar || !sidebar.classList.contains('is-open')) return;
+    sidebar.classList.remove('is-open');
+    if (overlay) overlay.classList.remove('is-visible');
+    if (toggle) {
+      toggle.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+    document.body.classList.remove('no-scroll');
+  }
+
+  function buildSidebarNavItem(collection, index, mode) {
+    var li = document.createElement('li');
+    var el = document.createElement(mode === 'scroll' ? 'button' : 'a');
+
+    el.className = 'sidebar-link';
+    el.setAttribute('data-slug', collection.slug);
+
+    if (mode === 'scroll') {
+      el.type = 'button';
+    } else {
+      el.href = 'collection.html?slug=' + encodeURIComponent(collection.slug);
+    }
+
+    var code = document.createElement('span');
+    code.className = 'sb-code';
+    code.textContent = String(index + 1).padStart(2, '0');
+
+    var label = document.createElement('span');
+    label.className = 'sb-label';
+    label.textContent = collection.name;
+
+    el.appendChild(code);
+    el.appendChild(label);
+    li.appendChild(el);
+    return li;
+  }
+
+  function wireSidebarScrollSpy(collections) {
+    var links = document.querySelectorAll('#sidebarList .sidebar-link');
+    if (!links.length) return;
+
+    links.forEach(function (link) {
+      link.addEventListener('click', function () {
+        var slug = link.getAttribute('data-slug');
+        var section = document.getElementById('collection-' + slug);
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        closeMobileSidebarIfOpen();
+      });
+    });
+
+    function setActive(slug) {
+      links.forEach(function (link) {
+        link.classList.toggle('active', link.getAttribute('data-slug') === slug);
+      });
+    }
+
+    var sections = collections
+      .map(function (c) { return document.getElementById('collection-' + c.slug); })
+      .filter(Boolean);
+
+    if (collections[0]) setActive(collections[0].slug);
+    if (!sections.length || !('IntersectionObserver' in window)) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      var visible = entries.filter(function (entry) { return entry.isIntersecting; });
+      if (!visible.length) return;
+      visible.sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      setActive(visible[0].target.id.replace('collection-', ''));
+    }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+
+  function wireSidebarStaticLinks() {
+    var links = document.querySelectorAll('#sidebarList .sidebar-link');
+    var params = new URLSearchParams(window.location.search);
+    var activeSlug = params.get('slug');
+
+    links.forEach(function (link) {
+      link.classList.toggle('active', activeSlug ? link.getAttribute('data-slug') === activeSlug : false);
+      link.addEventListener('click', closeMobileSidebarIfOpen);
+    });
+  }
+
+  function renderPersistentSidebar(collections, mode) {
+    var list = document.getElementById('sidebarList');
+    if (!list || !collections || !collections.length) return;
+
+    list.innerHTML = '';
+    collections.forEach(function (collection, i) {
+      list.appendChild(buildSidebarNavItem(collection, i, mode));
+    });
+
+    if (mode === 'scroll') {
+      wireSidebarScrollSpy(collections);
+    } else {
+      wireSidebarStaticLinks();
+    }
+  }
+
   function registerProductLookup(collections) {
     var byId = {};
     collections.forEach(function (c) {
@@ -205,6 +332,10 @@
     }
 
     applyReveal(host);
+
+    // Sections now exist in the DOM (id="collection-<slug>"), so the
+    // persistent left sidebar can scroll-spy against them.
+    renderPersistentSidebar(orderedCollections, 'scroll');
   }
 
   function init() {
@@ -232,5 +363,6 @@
   window.GZ.applyCollectionsReveal = applyReveal;
   window.GZ.loadCollectionScript = loadScript;
   window.GZ.registerCollectionProducts = registerProductLookup;
+  window.GZ.renderPersistentSidebar = renderPersistentSidebar;
 
 })();

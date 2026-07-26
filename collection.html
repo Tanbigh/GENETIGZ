@@ -44,7 +44,7 @@
      point back to the homepage catalog (this page has no category
      filter of its own — it's a single collection), so they're plain
      links instead of the JS-driven category buttons used on index.html. -->
-<nav id="sidebar" class="sidebar" aria-label="Product categories">
+<nav id="sidebar" class="sidebar" aria-label="Collections navigation">
   <div class="sidebar-top">
     <a href="index.html#top" class="sidebar-logo" aria-label="GENETIGZ — back to home">
       <span class="sidebar-logo-mark">
@@ -53,14 +53,20 @@
     </a>
   </div>
 
-  <ul class="sidebar-list">
-    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">01</span><span class="sb-label">T&#8209;Shirt</span></a></li>
-    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">02</span><span class="sb-label">Polo</span></a></li>
-    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">03</span><span class="sb-label">Baggy Tee</span></a></li>
-    <li><a class="sidebar-link" href="index.html#collection"><span class="sb-code">04</span><span class="sb-label">Tank Top</span></a></li>
-  </ul>
+  <!-- Populated dynamically by collections.js (renderPersistentSidebar,
+       'link' mode) from the real collections in
+       data/collections-index.js. This page has no per-collection
+       sections of its own (it renders one selected collection into a
+       single gallery pane below), so each entry is a plain link to
+       collection.html?slug=<slug>, reusing the ?slug= handling this
+       page's own script already has. Same markup/classes as index.html. -->
+  <ul class="sidebar-list" id="sidebarList" aria-live="polite"></ul>
 
   <div class="sidebar-bottom">
+    <a href="collection.html" class="sidebar-viewall">
+      <span>View All Collections</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
     <a href="https://wa.me/918145532620?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
        class="sidebar-customize" target="_blank" rel="noopener">
       <span>Customize</span>
@@ -406,6 +412,13 @@
       renderSidebarAndTabs();
       syncActiveHighlight();
       renderGalleryContent();
+
+      // Persistent left #sidebar (separate from the .collections-sidebar
+      // browser above) — same dynamic nav as index.html, in 'link' mode
+      // since this page has no per-collection sections to scroll to.
+      if (window.GZ.renderPersistentSidebar) {
+        window.GZ.renderPersistentSidebar(state.collections, 'link');
+      }
 
       var toggle = document.getElementById('collectionsSidebarToggle');
       var sidebar = document.getElementById('collectionsSidebar');
