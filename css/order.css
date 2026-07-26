@@ -1,0 +1,43 @@
+/* ==============================================================
+   GENETIGZ — ORDER PICKERS
+   Styles the .order-pickers block injected by order.js into the
+   existing product modal, right above #modalWhatsapp. Reuses the
+   site's existing tokens (--ink, --line, --brass, --font-mono) —
+   no new colors introduced.
+============================================================== */
+.order-pickers{
+  display: flex;
+  gap: 12px;
+  margin: 18px 0 20px;
+  flex-wrap: wrap;
+}
+.order-field{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 90px;
+}
+.order-field label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.order-select{
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  padding: 9px 10px;
+}
+.order-select:focus{
+  outline: none;
+  border-color: var(--brass);
+}
+
+@media (max-width: 480px){
+  .order-pickers{ flex-direction: column; }
+}

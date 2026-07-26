@@ -1,0 +1,232 @@
+/* ==============================================================
+   GENETIGZ — ADMIN DASHBOARD
+   Internal tool, so it uses the site's light/ivory surface (--bg,
+   --paper, --line, --ink) rather than the dark login treatment —
+   easier to scan tabular data on. Same fonts/colors/easing as the
+   rest of the site; no new tokens introduced.
+============================================================== */
+
+body.admin-page{
+  background: var(--bg);
+  min-height: 100vh;
+}
+body.admin-page main{ margin-left: 0; } /* no collections sidebar on this page */
+body.admin-page .topbar{ margin-left: 0; }
+
+.admin-main{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 24px 100px;
+  min-height: calc(100vh - var(--topbar-h));
+}
+
+/* ---- access gate ---- */
+.admin-gate{
+  max-width: 460px;
+  margin: 80px auto 0;
+  text-align: center;
+}
+.admin-gate-title{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 2rem;
+  color: var(--ink);
+  margin: 10px 0 14px;
+}
+.admin-gate-text{
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  margin: 0 0 24px;
+}
+
+/* ---- header ---- */
+.admin-header{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.admin-title{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--ink);
+  margin: 8px 0 0;
+}
+
+/* ---- stat cards ---- */
+.admin-stats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 36px;
+}
+.admin-stat{
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.admin-stat-value{
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.admin-stat-label{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- tabs ---- */
+.admin-tabs{
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+.admin-tab{
+  background: none;
+  border: none;
+  padding: 10px 4px;
+  margin-right: 24px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  position: relative;
+  transition: color .25s var(--ease);
+}
+.admin-tab::after{
+  content: '';
+  position: absolute;
+  left: 0; bottom: -1px;
+  width: 100%; height: 2px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s var(--ease);
+}
+.admin-tab:hover{ color: var(--ink); }
+.admin-tab.is-active{ color: var(--ink); }
+.admin-tab.is-active::after{ transform: scaleX(1); }
+
+.admin-panel{ display: none; }
+.admin-panel.is-active{ display: block; }
+
+/* ---- toolbar ---- */
+.admin-toolbar{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.admin-input, .admin-select{
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  padding: 10px 12px;
+}
+.admin-input{ flex: 1; min-width: 220px; }
+.admin-input--date{ flex: none; min-width: 150px; }
+.admin-input:focus, .admin-select:focus{
+  outline: none;
+  border-color: var(--brass);
+}
+
+/* ---- table ---- */
+.admin-table-wrap{
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.admin-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.admin-table th{
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.admin-table td{
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: top;
+}
+.admin-table tbody tr:last-child td{ border-bottom: none; }
+.admin-table tbody tr:hover{ background: rgba(156,125,71,0.05); }
+.admin-table-empty{
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 40px 16px !important;
+}
+.admin-cell-sub{
+  display: block;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.admin-badge{
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+}
+.admin-badge--opened{ border-color: #4c7a4f; color: #4c7a4f; }
+.admin-badge--pending{ border-color: var(--brass); color: var(--brass); }
+.admin-badge--failed{ border-color: #c0705a; color: #c0705a; }
+.admin-badge--admin{ border-color: var(--brass); color: var(--brass); }
+.admin-badge--member{ color: var(--muted); }
+
+/* ---- pagination ---- */
+.admin-pagination{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.admin-pagination button{
+  background: none;
+  border: 1px solid var(--line);
+  padding: 7px 13px;
+  color: var(--ink);
+  transition: border-color .25s var(--ease), color .25s var(--ease);
+}
+.admin-pagination button:hover:not(:disabled){ border-color: var(--brass); color: var(--brass); }
+.admin-pagination button:disabled{ opacity: .4; cursor: default; }
+
+@media (max-width: 700px){
+  .admin-stats{ grid-template-columns: 1fr; }
+  .admin-input--date{ min-width: 130px; }
+}

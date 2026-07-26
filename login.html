@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Sign In — GENETIGZ</title>
 <meta name="description" content="Sign in to your GENETIGZ account to track orders, save custom specs, and pick up your fitting history.">
-<meta name="theme-color" content="#1c1206">
+<meta name="theme-color" content="#0a0a0a">
 
 <!-- Icons (same as homepage) -->
 <link rel="icon" type="image/png" href="images/logo/logo-mark-180.png">
@@ -17,21 +17,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
 
 <!-- Existing sitewide styles — untouched -->
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="responsive.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
 <!-- New, page-scoped stylesheet for the login page only -->
-<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="css/login.css">
 </head>
 <body class="login-page">
 
-<!-- ============================================
-     TOP BAR — identical markup/classes to index.html so it inherits
-     every existing navbar style, hover state and transition as-is.
-     The sidebar (collections nav) is intentionally omitted here: it
-     exists to browse collections, which isn't relevant on an auth
-     screen, so main/.topbar are shifted to full width via login.css
-     (no edits to style.css/responsive.css needed for that).
-============================================= -->
 <header class="topbar">
   <div class="topbar-inner">
     <a href="index.html" class="brand">
@@ -49,9 +41,6 @@
 
   <section class="login-shell">
 
-    <!-- ============================================
-         BRAND / VISUAL PANEL
-    ============================================= -->
     <div class="login-visual corner-framed" aria-hidden="true">
       <div class="login-visual-bg"></div>
       <div class="login-visual-overlay"></div>
@@ -70,9 +59,6 @@
       </div>
     </div>
 
-    <!-- ============================================
-         LOGIN FORM PANEL
-    ============================================= -->
     <div class="login-panel">
       <div class="login-panel-inner">
 
@@ -80,8 +66,6 @@
         <h2 class="login-title">Sign in to your<br>account.</h2>
         <p class="login-sub">Enter your credentials to continue.</p>
 
-        <!-- action/method are placeholders for the future Express/JWT
-             endpoint; the JS layer intercepts submission for now. -->
         <form id="loginForm" class="login-form" action="/api/auth/login" method="post" novalidate>
 
           <div class="form-field">
@@ -152,8 +136,8 @@
 </main>
 
 <!-- Scripts -->
-<script src="gz-config.js"></script>
-<script src="auth.js"></script>
-<script src="login.js"></script>
+<script src="js/gz-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/login.js"></script>
 </body>
 </html>

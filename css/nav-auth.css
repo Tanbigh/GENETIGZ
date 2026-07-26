@@ -1,0 +1,28 @@
+/* ==============================================================
+   GENETIGZ — NAV AUTH CONTROL STYLES
+   Only styles the .gz-nav-auth-* classes injected by nav-auth.js.
+   Reuses existing .btn-customize look for visual consistency —
+   no new color tokens introduced.
+============================================================== */
+.gz-nav-auth{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 14px;
+}
+.gz-nav-auth-name{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-soft, currentColor);
+  white-space: nowrap;
+}
+.gz-nav-auth-logout{
+  cursor: pointer;
+  background: none;
+}
+
+@media (max-width: 640px){
+  .gz-nav-auth-name{ display: none; }
+}
