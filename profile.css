@@ -1,0 +1,74 @@
+/* ==============================================================
+   GENETIGZ — PROFILE PAGE
+   Layout only — table/stat/badge visuals are reused from
+   admin/admin.css so the "your orders" list matches the admin
+   dashboard's order table exactly.
+============================================================== */
+
+body.profile-page main{ margin-left: 0; }
+body.profile-page .topbar{ margin-left: 0; }
+
+.profile-main{ max-width: 900px; }
+
+.profile-card{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 28px;
+  margin-bottom: 40px;
+}
+
+.profile-avatar{
+  width: 56px; height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 22px;
+}
+
+.profile-meta{ flex: 1; min-width: 0; }
+.profile-name{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin: 0;
+}
+.profile-email{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  margin: 4px 0 0;
+}
+.profile-joined{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+
+.profile-section-title{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.3rem;
+  color: var(--ink);
+  margin: 0 0 16px;
+}
+
+@media (max-width: 560px){
+  .profile-card{ flex-wrap: wrap; }
+  .profile-card .btn-ghost{ width: 100%; justify-content: center; }
+}

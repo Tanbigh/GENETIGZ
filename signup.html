@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Create Account — GENETIGZ</title>
+<meta name="description" content="Create a GENETIGZ account to order, track, and save your fitting history.">
+<meta name="theme-color" content="#1c1206">
+
+<link rel="icon" type="image/png" href="images/logo/logo-mark-180.png">
+<link rel="apple-touch-icon" href="images/logo/logo-mark-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="responsive.css">
+<!-- Reuses login.css — same components (.login-panel, .form-field, etc.),
+     same visual language, no new stylesheet needed for this page. -->
+<link rel="stylesheet" href="login.css">
+</head>
+<body class="login-page">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+      <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+    </a>
+    <div class="topbar-tag">SECURE ACCESS — CREATE ACCOUNT</div>
+    <a href="index.html" class="btn-customize">Back to Store</a>
+  </div>
+</header>
+
+<main class="login-main" id="top">
+  <section class="login-shell">
+
+    <div class="login-visual corner-framed" aria-hidden="true">
+      <div class="login-visual-bg"></div>
+      <div class="login-visual-overlay"></div>
+      <div class="login-visual-content">
+        <p class="eyebrow">GZ // FW26 ACCESS</p>
+        <h1 class="login-visual-title">Join the<br>engineered few.</h1>
+        <p class="login-visual-desc">
+          Create an account to order, track custom specs, and pick up
+          exactly where you left off — on any device.
+        </p>
+        <div class="login-visual-meta">
+          <span class="login-visual-code">SEQ. 003</span>
+          <span class="login-visual-sep">/</span>
+          <span>NEW MEMBER</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-panel">
+      <div class="login-panel-inner">
+
+        <p class="eyebrow">GET STARTED</p>
+        <h2 class="login-title">Create your<br>account.</h2>
+        <p class="login-sub">Takes less than a minute.</p>
+
+        <form id="signupForm" class="login-form" action="/api/auth/register" method="post" novalidate>
+
+          <div class="form-field">
+            <label for="signupName">Full Name</label>
+            <input type="text" id="signupName" name="name" placeholder="Your name" autocomplete="name" required>
+            <span class="field-error" id="nameError" role="alert"></span>
+          </div>
+
+          <div class="form-field">
+            <label for="signupEmail">Email Address</label>
+            <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <span class="field-error" id="signupEmailError" role="alert"></span>
+          </div>
+
+          <div class="form-field">
+            <label for="signupPassword">Password</label>
+            <div class="password-wrap">
+              <input type="password" id="signupPassword" name="password" placeholder="••••••••" autocomplete="new-password" minlength="6" required>
+              <button type="button" class="password-toggle" id="signupPasswordToggle" aria-label="Show password" aria-pressed="false">
+                <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3.2"/>
+                </svg>
+                <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M3 3l18 18"/>
+                  <path d="M10.6 5.2A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17.7 17.7 0 0 1-3.6 4.6M6.4 6.4C3.7 8.1 2 12 2 12s3.6 7 10 7c1.2 0 2.3-.2 3.3-.6"/>
+                  <path d="M9.5 9.6a3.2 3.2 0 0 0 4.5 4.5"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-error" id="signupPasswordError" role="alert"></span>
+          </div>
+
+          <div class="form-field">
+            <label for="signupConfirm">Confirm Password</label>
+            <input type="password" id="signupConfirm" name="confirmPassword" placeholder="••••••••" autocomplete="new-password" minlength="6" required>
+            <span class="field-error" id="confirmError" role="alert"></span>
+          </div>
+
+          <button type="submit" class="btn-primary btn-login" id="signupSubmit">
+            <span class="btn-login-text">Create Account</span>
+          </button>
+
+          <p class="form-status" id="signupStatus" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="login-divider"><span>Already a member?</span></div>
+
+        <a href="login.html" class="btn-ghost btn-create-account">Sign In</a>
+
+      </div>
+
+      <p class="login-footnote">© <span id="signupYear"></span> <span class="brand-word">GENETIGZ</span>. Engineered streetwear.</p>
+    </div>
+
+  </section>
+</main>
+
+<script src="gz-config.js"></script>
+<script src="auth.js"></script>
+<script src="signup.js"></script>
+</body>
+</html>

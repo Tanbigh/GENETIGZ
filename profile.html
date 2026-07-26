@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>My Profile — GENETIGZ</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f8f3e8">
+
+<link rel="icon" type="image/png" href="images/logo/logo-mark-180.png">
+<link rel="apple-touch-icon" href="images/logo/logo-mark-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300..680&family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="responsive.css">
+<!-- Reuses the admin dashboard's table/stat/badge components for the
+     order-history list, plus its own small set of page rules. -->
+<link rel="stylesheet" href="admin/admin.css">
+<link rel="stylesheet" href="nav-auth.css">
+<link rel="stylesheet" href="profile.css">
+</head>
+<body class="profile-page">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">
+        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+      <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+    </a>
+    <div class="topbar-tag">MEMBER ACCOUNT</div>
+  </div>
+</header>
+
+<main class="admin-main profile-main">
+
+  <div class="admin-gate" id="profileGate">
+    <p class="eyebrow">CHECKING SESSION</p>
+    <h1 class="admin-gate-title">One moment.</h1>
+    <p class="admin-gate-text">Verifying your session…</p>
+  </div>
+
+  <div class="profile-content" id="profileContent" hidden>
+
+    <div class="profile-card">
+      <div class="profile-avatar" id="profileAvatar">G</div>
+      <div class="profile-meta">
+        <h1 class="profile-name" id="profileName">—</h1>
+        <p class="profile-email" id="profileEmail">—</p>
+        <p class="profile-joined" id="profileJoined"></p>
+      </div>
+      <button type="button" class="btn-ghost" id="profileLogoutBtn">Log Out</button>
+    </div>
+
+    <h2 class="profile-section-title">My Orders</h2>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Date &amp; Time</th>
+            <th>Product</th>
+            <th>Size</th>
+            <th>Color</th>
+            <th>Qty</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="myOrdersBody">
+          <tr><td colspan="6" class="admin-table-empty">Loading your orders…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<script src="gz-config.js"></script>
+<script src="auth.js"></script>
+<script src="nav-auth.js"></script>
+<script src="profile.js"></script>
+</body>
+</html>

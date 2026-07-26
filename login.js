@@ -1,21 +1,15 @@
 /* ==============================================================
    GENETIGZ — LOGIN PAGE SCRIPT
    Handles: footer year, show/hide password, client-side form
-   validation, and a "remember me" convenience (email only — never
-   the password) stored in localStorage.
+   validation, real login against the backend API (see
+   backend/README.md), and returning the person to whatever they were
+   doing before they were asked to log in.
 
-   FUTURE BACKEND INTEGRATION
-   This is frontend-only for now. The single place to wire up a real
-   Node/Express + MongoDB + JWT auth API is marked below inside
-   handleSubmit(). Swap the simulated block for a fetch() call to
-   your endpoint (e.g. POST /api/auth/login), store the returned
-   token, and redirect on success.
+   Requires gz-config.js + auth.js loaded first (see login.html).
 ============================================================== */
 
 (function () {
   'use strict';
-
-  var STORAGE_KEY = 'gz_remember_email';
 
   function initFooterYear() {
     var yearEl = document.getElementById('loginYear');
@@ -33,7 +27,6 @@
 
     toggle.addEventListener('click', function () {
       var isCurrentlyHidden = input.type === 'password';
-
       input.type = isCurrentlyHidden ? 'text' : 'password';
       toggle.classList.toggle('is-visible', isCurrentlyHidden);
       toggle.setAttribute('aria-pressed', String(isCurrentlyHidden));
@@ -45,8 +38,6 @@
      VALIDATION HELPERS
   ------------------------------------------------------------------- */
   function isValidEmail(value) {
-    // Simple, permissive pattern — good enough for client-side UX;
-    // the real source of truth should still validate server-side.
     var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return pattern.test(value.trim());
   }
@@ -64,32 +55,50 @@
   }
 
   /* ----------------------------------------------------------------
+     RETURN-TO-CHECKOUT
+     If the person landed here because order.js redirected them mid-
+     order, ?redirect=<url they came from> is present. We send them
+     straight back there after login; order.js (already loaded on
+     that page) takes it from there using the pending order it saved
+     in localStorage before the redirect.
+  ------------------------------------------------------------------- */
+  function getReturnUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var redirect = params.get('redirect');
+    if (redirect) {
+      try {
+        return decodeURIComponent(redirect);
+      } catch (err) {
+        return 'index.html';
+      }
+    }
+    return 'index.html';
+  }
+
+  /* ----------------------------------------------------------------
      REMEMBER ME (email only, never the password)
   ------------------------------------------------------------------- */
+  var REMEMBER_KEY = 'gz_remember_email';
+
   function initRememberedEmail(emailInput, rememberInput) {
     if (!emailInput || !rememberInput) return;
-
     try {
-      var savedEmail = window.localStorage.getItem(STORAGE_KEY);
+      var savedEmail = window.localStorage.getItem(REMEMBER_KEY);
       if (savedEmail) {
         emailInput.value = savedEmail;
         rememberInput.checked = true;
       }
-    } catch (err) {
-      // localStorage unavailable (privacy mode, etc.) — fail silently.
-    }
+    } catch (err) {}
   }
 
   function persistRememberedEmail(emailInput, rememberInput) {
     try {
       if (rememberInput.checked && emailInput.value.trim()) {
-        window.localStorage.setItem(STORAGE_KEY, emailInput.value.trim());
+        window.localStorage.setItem(REMEMBER_KEY, emailInput.value.trim());
       } else {
-        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(REMEMBER_KEY);
       }
-    } catch (err) {
-      // Ignore storage failures — this is a convenience, not critical.
-    }
+    } catch (err) {}
   }
 
   /* ----------------------------------------------------------------
@@ -112,6 +121,12 @@
     var passwordError = document.getElementById('passwordError');
 
     initRememberedEmail(emailInput, rememberInput);
+
+    // If a redirect target exists, let the person know why they're here.
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('redirect') && statusEl) {
+      setStatus(statusEl, 'Sign in to continue your order.', null);
+    }
 
     function validate() {
       var isValid = true;
@@ -139,7 +154,6 @@
       return isValid;
     }
 
-    // Clear a field's error state as soon as the person starts fixing it.
     [emailInput, passwordInput].forEach(function (input) {
       input.addEventListener('input', function () {
         var field = input.closest('.form-field');
@@ -150,10 +164,14 @@
 
     function handleSubmit(e) {
       e.preventDefault();
-      setStatus(statusEl, '', null);
 
       if (!validate()) {
         setStatus(statusEl, 'Please fix the highlighted fields.', 'error');
+        return;
+      }
+
+      if (!window.GZAuth) {
+        setStatus(statusEl, 'Auth helper not loaded — check gz-config.js/auth.js are included.', 'error');
         return;
       }
 
@@ -161,45 +179,44 @@
 
       if (submitBtn) submitBtn.classList.add('is-loading');
       if (submitLabel) submitLabel.textContent = 'Signing In…';
+      setStatus(statusEl, '', null);
 
-      // --------------------------------------------------------
-      // FUTURE BACKEND INTEGRATION POINT
-      // Replace this simulated timeout with a real request once the
-      // Node/Express + MongoDB + JWT API is live, e.g.:
-      //
-      // fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     email: emailInput.value.trim(),
-      //     password: passwordInput.value,
-      //     remember: rememberInput.checked
-      //   })
-      // })
-      //   .then(function (res) { return res.json(); })
-      //   .then(function (data) {
-      //     // store data.token (JWT), then redirect:
-      //     // window.location.href = 'index.html';
-      //   })
-      //   .catch(function () {
-      //     setStatus(statusEl, 'Something went wrong. Try again.', 'error');
-      //   })
-      //   .finally(function () {
-      //     if (submitBtn) submitBtn.classList.remove('is-loading');
-      //     if (submitLabel) submitLabel.textContent = 'Sign In';
-      //   });
-      // --------------------------------------------------------
-      window.setTimeout(function () {
-        if (submitBtn) submitBtn.classList.remove('is-loading');
-        if (submitLabel) submitLabel.textContent = 'Sign In';
-        setStatus(statusEl, 'Demo mode — connect the auth API to enable real sign-in.', 'success');
-      }, 1100);
+      window.GZAuth.apiFetch('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: emailInput.value.trim(),
+          password: passwordInput.value,
+        }),
+      })
+        .then(function (data) {
+          window.GZAuth.saveSession(data.token, data.user);
+          setStatus(statusEl, 'Signed in — redirecting…', 'success');
+          window.setTimeout(function () {
+            window.location.href = getReturnUrl();
+          }, 400);
+        })
+        .catch(function (err) {
+          setStatus(statusEl, err.message || 'Login failed. Please try again.', 'error');
+        })
+        .finally(function () {
+          if (submitBtn) submitBtn.classList.remove('is-loading');
+          if (submitLabel) submitLabel.textContent = 'Sign In';
+        });
     }
 
     form.addEventListener('submit', handleSubmit);
   }
 
   function init() {
+    // Already logged in and just browsing to login.html directly?
+    // Send them straight through instead of showing the form again.
+    if (window.GZAuth && window.GZAuth.isLoggedIn()) {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('redirect')) {
+        window.location.href = getReturnUrl();
+        return;
+      }
+    }
     initFooterYear();
     initPasswordToggle();
     initFormValidation();

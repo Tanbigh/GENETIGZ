@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Admin Dashboard — GENETIGZ</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f8f3e8">
+
+<link rel="icon" type="image/png" href="../images/logo/logo-mark-180.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300..680&display=swap" rel="stylesheet">
+
+<!-- Reuses the sitewide tokens (colors/fonts/easing) from style.css,
+     unmodified — this page just adds its own dashboard layout on top. -->
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-page">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">
+        <img src="../images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
+      </span>
+      <span class="brand-word">GENETIGZ<span class="brand-dot">.</span></span>
+    </a>
+    <div class="topbar-tag">ADMIN DASHBOARD</div>
+    <a href="../index.html" class="btn-customize">Back to Store</a>
+  </div>
+</header>
+
+<main class="admin-main">
+
+  <!-- Shown while we're checking the session / if access is denied -->
+  <div class="admin-gate" id="adminGate">
+    <p class="eyebrow">CHECKING ACCESS</p>
+    <h1 class="admin-gate-title">One moment.</h1>
+    <p class="admin-gate-text" id="adminGateText">Verifying your session…</p>
+    <a href="../login.html" class="btn-primary" id="adminGateLoginBtn" hidden>Sign In</a>
+  </div>
+
+  <!-- Real dashboard, hidden until access is confirmed -->
+  <div class="admin-dashboard" id="adminDashboard" hidden>
+
+    <div class="admin-header">
+      <div>
+        <p class="eyebrow">MEMBER PORTAL // ADMIN</p>
+        <h1 class="admin-title">Orders &amp; Users</h1>
+      </div>
+      <button type="button" class="btn-ghost" id="adminLogoutBtn">Log Out</button>
+    </div>
+
+    <div class="admin-stats" id="adminStats">
+      <div class="admin-stat">
+        <span class="admin-stat-value" id="statTotalUsers">—</span>
+        <span class="admin-stat-label">Registered Users</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-value" id="statTotalOrders">—</span>
+        <span class="admin-stat-label">Total Orders</span>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat-value" id="statOrdersToday">—</span>
+        <span class="admin-stat-label">Orders Today</span>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button type="button" class="admin-tab is-active" data-tab="orders">Orders</button>
+      <button type="button" class="admin-tab" data-tab="users">Users</button>
+    </div>
+
+    <!-- ORDERS -->
+    <section class="admin-panel is-active" id="panel-orders">
+      <div class="admin-toolbar">
+        <input type="text" id="orderSearch" class="admin-input" placeholder="Search name, email, product, product ID…">
+        <select id="orderStatusFilter" class="admin-select">
+          <option value="">All statuses</option>
+          <option value="opened">Opened</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Failed</option>
+        </select>
+        <input type="date" id="orderFrom" class="admin-input admin-input--date" aria-label="From date">
+        <input type="date" id="orderTo" class="admin-input admin-input--date" aria-label="To date">
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date &amp; Time</th>
+              <th>User</th>
+              <th>Product</th>
+              <th>Size</th>
+              <th>Color</th>
+              <th>Qty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <tr><td colspan="7" class="admin-table-empty">Loading orders…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-pagination" id="ordersPagination"></div>
+    </section>
+
+    <!-- USERS -->
+    <section class="admin-panel" id="panel-users">
+      <div class="admin-toolbar">
+        <input type="text" id="userSearch" class="admin-input" placeholder="Search name or email…">
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="4" class="admin-table-empty">Loading users…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="../gz-config.js"></script>
+<script src="../auth.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
