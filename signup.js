@@ -3,11 +3,7 @@
    Mirrors login.js: validation, show/hide password, then a real
    POST /api/auth/register call. On success behaves exactly like a
    login (session saved, returned to wherever they came from).
-
-   Phone number: combined from the country-code <select> and the
-   number <input> into a single "+<code><digits>" string before it's
-   sent to the API (matches PHONE_RE in api/routes/auth.routes.js).
-============================================== */
+============================================================== */
 
 (function () {
   'use strict';
@@ -34,17 +30,6 @@
 
   function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-  }
-
-  // Strips spaces/dashes/parens, requires 7–14 digits (a full
-  // international number is usually shorter than that once the
-  // country code is split out into its own field).
-  function digitsOnly(value) {
-    return String(value || '').replace(/[^\d]/g, '');
-  }
-  function isValidPhoneNumber(value) {
-    var digits = digitsOnly(value);
-    return digits.length >= 7 && digits.length <= 14;
   }
 
   function setFieldError(fieldEl, errorEl, message) {
@@ -74,8 +59,6 @@
 
     var nameInput = document.getElementById('signupName');
     var emailInput = document.getElementById('signupEmail');
-    var phoneCodeInput = document.getElementById('signupPhoneCode');
-    var phoneInput = document.getElementById('signupPhone');
     var passwordInput = document.getElementById('signupPassword');
     var confirmInput = document.getElementById('signupConfirm');
     var submitBtn = document.getElementById('signupSubmit');
@@ -85,7 +68,6 @@
     var fields = {
       name: { input: nameInput, field: nameInput.closest('.form-field'), error: document.getElementById('nameError') },
       email: { input: emailInput, field: emailInput.closest('.form-field'), error: document.getElementById('signupEmailError') },
-      phone: { input: phoneInput, field: phoneInput.closest('.form-field'), error: document.getElementById('phoneError') },
       password: { input: passwordInput, field: passwordInput.closest('.form-field'), error: document.getElementById('signupPasswordError') },
       confirm: { input: confirmInput, field: confirmInput.closest('.form-field'), error: document.getElementById('confirmError') },
     };
@@ -116,16 +98,6 @@
         setFieldError(fields.email.field, fields.email.error, '');
       }
 
-      if (!phoneInput.value.trim()) {
-        setFieldError(fields.phone.field, fields.phone.error, 'Phone number is required.');
-        isValid = false;
-      } else if (!isValidPhoneNumber(phoneInput.value)) {
-        setFieldError(fields.phone.field, fields.phone.error, 'Enter a valid phone number.');
-        isValid = false;
-      } else {
-        setFieldError(fields.phone.field, fields.phone.error, '');
-      }
-
       if (!passwordInput.value || passwordInput.value.length < 6) {
         setFieldError(fields.password.field, fields.password.error, 'Must be at least 6 characters.');
         isValid = false;
@@ -151,11 +123,9 @@
         return;
       }
       if (!window.GZAuth) {
-        setStatus(statusEl, 'Auth helper not loaded — check js/gz-config.js and js/auth.js are included.', 'error');
+        setStatus(statusEl, 'Auth helper not loaded — check gz-config.js/auth.js are included.', 'error');
         return;
       }
-
-      var fullPhone = phoneCodeInput.value + digitsOnly(phoneInput.value);
 
       if (submitBtn) submitBtn.classList.add('is-loading');
       if (submitLabel) submitLabel.textContent = 'Creating…';
@@ -166,7 +136,6 @@
         body: JSON.stringify({
           name: nameInput.value.trim(),
           email: emailInput.value.trim(),
-          phone: fullPhone,
           password: passwordInput.value,
         }),
       })
