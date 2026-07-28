@@ -981,7 +981,8 @@ main{ margin-left: var(--sidebar-w); }
 
 .footer-col a, .footer-col button{
   position: relative;
-  display: inline-block;
+  display: block;
+  width: fit-content;
   background: none;
   border: none;
   color: var(--ink-soft);
