@@ -40,7 +40,7 @@
 
   function whatsappLink(product) {
     var msg = 'Hi Genetigz, I\'d like to order the ' + product.name + ' (' + product.code + ').';
-    return 'https://wa.me/918145532620?text=' + encodeURIComponent(msg);
+    return 'https://wa.me/917001494960?text=' + encodeURIComponent(msg);
   }
 
   // Identical markup to products.js's buildCard, so .product-card CSS/behavior
