@@ -23,7 +23,7 @@
   window.GZ_COLLECTIONS.push({
     slug: 'animeverse',
     name: 'Animeverse',
-    description: 'Anime-inspired graphics on the same engineered fabric base as the core line.',
+    description: 'For every Otaku',
     products: [
       {
         id: 'av-001', code: 'AV-001', category: 'animeverse',

@@ -21,7 +21,7 @@
   window.GZ_COLLECTIONS.push({
     slug: 'typewriter',
     name: 'Type Writer',
-    description: 'Typography-led statements, straight off the page and onto the fabric.',
+    description: 'Say it without speaking',
     products: [
       {
         id: 'tw-001', code: 'TW-001', category: 'typewriter',

@@ -566,15 +566,16 @@ main{ margin-left: var(--sidebar-w); }
 .hero-desc{
   color: var(--ink-soft);
   font-size: 16px;
-  max-width: 46ch;
-  margin: 0 0 38px;
+  max-width: 48ch;
+  margin: 0 0 30px;
   font-weight: 300;
+  line-height: 1.6;
 }
 .hero-note{
   color: var(--ink-soft);
   font-size: 14.5px;
   max-width: 48ch;
-  margin: -14px 0 28px;
+  margin: 0 0 28px;
   font-weight: 300;
   line-height: 1.7;
 }

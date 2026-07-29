@@ -16,9 +16,11 @@
 
 window.GZ_COLLECTIONS_INDEX = [
   'animeverse',
-  'bloomytales',
+  'vagabond',
   'lonewolf',
-  'outliers',
+  'bloomytales',
+  'lostpalette',
   'typewriter',
-  'vagabond'
+  'adhyatma',
+  'outliers'
 ];

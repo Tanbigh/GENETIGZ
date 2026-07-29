@@ -22,7 +22,7 @@
   window.GZ_COLLECTIONS.push({
     slug: 'lonewolf',
     name: 'Lone Wolf',
-    description: 'Solitary rides and rebel spirit, printed on the same engineered fabric base as the core line.',
+    description: 'Power. Pace. Passion',
     products: [
       {
         id: 'lw-001', code: 'LW-001', category: 'lonewolf',

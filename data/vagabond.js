@@ -21,7 +21,7 @@
   window.GZ_COLLECTIONS.push({
     slug: 'vagabond',
     name: 'Vagabond',
-    description: 'Wanderer graphics for the ones always chasing the next stamp in the passport.',
+    description: 'Designed for wanderers',
     products: [
       {
         id: 'vg-001', code: 'VG-001', category: 'vagabond',

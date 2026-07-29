@@ -23,7 +23,7 @@
   window.GZ_COLLECTIONS.push({
     slug: 'bloomytales',
     name: 'Bloomy Tales',
-    description: 'Soft, aesthetic graphics with a cute, storybook edge.',
+    description: 'Cute, Cozy, and Aesthetic by heart',
     products: [
       {
         id: 'bt-001', code: 'BT-001', category: 'bloomytales',

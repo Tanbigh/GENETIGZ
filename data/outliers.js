@@ -22,7 +22,7 @@
   window.GZ_COLLECTIONS.push({
     slug: 'outliers',
     name: 'Outliers',
-    description: 'For the ones who don\u2019t run with the pack — bold graphics with an offbeat edge.',
+    description: 'Stories beyond categories',
     products: [
       {
         id: 'ol-001', code: 'OL-001', category: 'outliers',
