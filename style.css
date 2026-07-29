@@ -458,7 +458,6 @@ a.brand:hover .brand-mark,
   position: sticky;
   top: 0;
   z-index: 40;
-  margin-left: var(--sidebar-w);
   /* Same crest dark used behind the logo mark, now solid so the
      navbar reads as its own branded bar rather than a tinted
      ivory strip. */
@@ -522,9 +521,11 @@ a.brand:hover .brand-mark,
 }
 
 /* ==============================================================
-   MAIN OFFSET (account for fixed sidebar)
+   MAIN — full-width now that the persistent left sidebar has
+   been removed (sidebar CSS below is left in place but unused,
+   since nothing in the DOM references it anymore).
 ============================================================== */
-main{ margin-left: var(--sidebar-w); }
+main{ margin-left: 0; }
 
 /* ==============================================================
    HERO
@@ -996,12 +997,12 @@ main{ margin-left: var(--sidebar-w); }
 }
 
 .footer-brand .brand{ font-size: 20px; }
-.footer-brand p{ color: var(--ink-soft); font-size: 13.5px; margin: 16px 0 26px; line-height: 1.75; font-weight: 300; max-width: 34ch; }
 
 .footer-social{
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 22px;
 }
 .footer-social a{
   display: inline-flex;
