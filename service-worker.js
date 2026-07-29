@@ -3,20 +3,32 @@
    Strategy:
    - App shell (HTML/CSS/JS/manifest/logo) cached on install so the
      site opens instantly and works offline on repeat visits.
-   - Navigations: network-first, falling back to cache, then to
-     offline.html if nothing cached is available.
+   - Navigations (index.html, collection.html): NETWORK FIRST. Always
+     tries the network first and updates the cache with whatever
+     comes back, so a live page is never served stale HTML while
+     online. Only falls back to the last-known-good cached page (then
+     offline.html) if the network request itself fails.
+   - CSS / JS / manifest: also NETWORK FIRST (changed from
+     stale-while-revalidate — that pattern served the cached copy
+     immediately and only updated it in the background, so one full
+     load after every deploy still rendered with old styles/scripts).
+     Falls back to cache only if the network request fails, so
+     offline support is unchanged.
    - Images: cache-first, populated as the user actually scrolls to
      and lazy-loads them (mirrors the site's own progressive-image
-     hydration in script.js), so offline support "fills in" as
-     someone browses rather than requiring one giant upfront download.
-   - CSS/JS/manifest: stale-while-revalidate, so repeat visits are
-     instant but still pick up updates in the background.
+     hydration in script.js). Unaffected by this change — images
+     don't change per-deploy the way HTML/CSS/JS do.
+   - Every network fetch below is issued with `cache: 'no-store'`, so
+     the browser's own plain HTTP cache can never hand the service
+     worker a stale response out from under it. Without this, a
+     "network first" strategy can still be silently defeated by
+     Cache-Control/ETag headers on the underlying HTTP request.
 
    Bump CACHE_VERSION whenever app-shell files change so old caches
    are cleared out on the next visit.
 ============================================== */
 
-const CACHE_VERSION = 'genetigz-v4';
+const CACHE_VERSION = 'genetigz-v5';
 const APP_SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -51,11 +63,15 @@ self.addEventListener('install', (event) => {
         // addAll fails atomically if any single request 404s, so we
         // fall back to best-effort caching to avoid a totally broken
         // install just because one shell asset is still a placeholder.
+        // cache: 'no-store' here too, so the very first cache write
+        // isn't itself a stale HTTP-cached copy of an app-shell file.
         Promise.all(
           APP_SHELL.map((url) =>
-            cache.add(url).catch((err) => {
-              console.warn('[SW] Skipped caching (not found yet):', url, err);
-            })
+            fetch(url, { cache: 'no-store' })
+              .then((response) => cache.put(url, response))
+              .catch((err) => {
+                console.warn('[SW] Skipped caching (not found yet):', url, err);
+              })
           )
         )
       )
@@ -70,6 +86,10 @@ self.addEventListener('activate', (event) => {
       .then((keys) =>
         Promise.all(
           keys
+            // Delete every cache from a previous CACHE_VERSION —
+            // anything prefixed 'genetigz-' that isn't this version's
+            // shell/runtime cache. Bumping CACHE_VERSION above is what
+            // makes this actually run on the next deploy.
             .filter(
               (key) =>
                 key.startsWith('genetigz-') &&
@@ -98,10 +118,10 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return; // leave fonts CDN, wa.me, etc. alone
 
-  // --- Page navigations ---
+  // --- Page navigations (index.html, collection.html, etc.): NETWORK FIRST ---
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-store' })
         .then((response) => {
           const copy = response.clone();
           caches.open(APP_SHELL_CACHE).then((cache) => cache.put(request, copy));
@@ -133,27 +153,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // --- CSS / JS / manifest: stale-while-revalidate ---
+  // --- CSS / JS / manifest / JSON data files: NETWORK FIRST ---
+  // Changed from stale-while-revalidate. That pattern returned the
+  // cached copy immediately and only refreshed it in the background,
+  // so the very next load after a deploy still rendered with the old
+  // stylesheet/script. This now always tries the network first (with
+  // cache: 'no-store' so the browser's own HTTP cache can't hand back
+  // a stale response either) and only drops back to the cached copy
+  // if the network request actually fails — same offline guarantee,
+  // without ever preferring stale content while online.
   if (
     ['style', 'script', 'manifest'].includes(request.destination) ||
     url.pathname.endsWith('.json')
   ) {
     event.respondWith(
-      caches.open(APP_SHELL_CACHE).then((cache) =>
-        cache.match(request).then((cached) => {
-          const fetchPromise = fetch(request)
-            .then((response) => {
-              cache.put(request, response.clone());
-              return response;
-            })
-            .catch(() => cached);
-          return cached || fetchPromise;
+      fetch(request, { cache: 'no-store' })
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(APP_SHELL_CACHE).then((cache) => cache.put(request, copy));
+          return response;
         })
-      )
+        .catch(() => caches.match(request))
     );
     return;
   }
 
   // --- Everything else: network falling back to cache ---
-  event.respondWith(fetch(request).catch(() => caches.match(request)));
+  event.respondWith(
+    fetch(request, { cache: 'no-store' }).catch(() => caches.match(request))
+  );
 });
