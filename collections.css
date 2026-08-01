@@ -226,3 +226,181 @@
   .collections-sidebar{ display: none; }
   .collections-tabs{ display: flex; margin-bottom: 4px; }
 }
+
+/* ==============================================================
+   PERSISTENT SIDEBAR — dynamic Filters section (Color + Size)
+   Lives inside #sidebar, directly below #sidebarList (which now
+   renders Product Categories instead of collection/drop names —
+   see product-filters.js). Uses the same design tokens as every
+   other sidebar control (--brass, --line, --ink, --font-mono,
+   --ease) so it matches without introducing new colors/typography.
+============================================================== */
+.sidebar-filters{
+  padding: 4px 24px 20px;
+  border-top: 1px solid var(--line);
+  margin-top: 6px;
+}
+.sidebar-filter-group + .sidebar-filter-group{ margin-top: 20px; }
+.sidebar-filter-heading{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 16px 0 10px;
+}
+.swatch-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.color-swatch{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  outline: 1px solid var(--line);
+  outline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+  transition: outline-color .25s var(--ease), transform .2s var(--ease);
+}
+.color-swatch:hover{ transform: scale(1.08); }
+.color-swatch.is-active{
+  border-color: var(--paper);
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+/* Fallback swatch for a color name that can't be matched to either
+   official chart or a recognized CSS color — a hatched pattern
+   rather than a guessed-wrong solid color. */
+.color-swatch.no-ref{
+  background: repeating-linear-gradient(45deg, #ddd, #ddd 4px, #f4f4f4 4px, #f4f4f4 8px);
+}
+.size-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.size-chip{
+  min-width: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .25s var(--ease);
+}
+.size-chip:hover{ border-color: var(--brass); color: var(--ink); }
+.size-chip.is-active{
+  border-color: var(--brass);
+  background: var(--brass);
+  color: var(--paper);
+}
+.sidebar-filter-clear{
+  margin-top: 18px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color .25s var(--ease);
+}
+.sidebar-filter-clear:hover{ color: var(--ink); }
+.sidebar-filter-clear[hidden]{ display: none; }
+
+/* Product cards hidden by the active category/color/size filters —
+   applied by product-filters.js on top of whatever card markup
+   collections.js (or collection.html's own script) already built. */
+.product-card.is-filtered-out{ display: none !important; }
+
+/* Whole homepage collection-preview section hidden once every card
+   inside it has been filtered out. */
+.collection-section.is-filtered-empty{ display: none; }
+
+.filters-empty-message{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  padding: 40px 0;
+  text-align: center;
+}
+
+@media (max-width: 900px){
+  .sidebar-filters{ padding: 4px 20px 24px; }
+}
+
+/* ==============================================================
+   SIZE GUIDE — lightweight image lightbox opened from the product
+   modal's new "Size Guide" button (see modal.js). Reuses the same
+   dim/blur backdrop language as .modal-overlay but is a separate,
+   simpler overlay (just one image), so it never interferes with
+   #productModal's own open/close state.
+============================================================== */
+.size-guide-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,10,0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s var(--ease);
+}
+.size-guide-overlay.is-open{ opacity: 1; pointer-events: auto; }
+.size-guide-box{
+  position: relative;
+  max-width: 720px;
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 20px;
+}
+.size-guide-box img{ width: 100%; height: auto; display: block; }
+.size-guide-close{
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.btn-size-guide{
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid var(--line);
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .25s var(--ease), color .25s var(--ease);
+}
+.btn-size-guide:hover{ border-color: var(--brass); color: var(--brass); }

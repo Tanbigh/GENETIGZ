@@ -333,9 +333,13 @@
 
     applyReveal(host);
 
-    // Sections now exist in the DOM (id="collection-<slug>"), so the
-    // persistent left sidebar can scroll-spy against them.
-    renderPersistentSidebar(orderedCollections, 'scroll');
+    // NOTE: the persistent left #sidebar's #sidebarList used to be
+    // populated here with one entry per collection/drop. It's now
+    // owned by product-filters.js, which renders dynamic Product
+    // Categories (+ Color/Size filters) there instead — see that
+    // file for details. renderPersistentSidebar() below is left
+    // intact and exported in case a future page still wants a plain
+    // collections nav, but it's no longer called automatically here.
   }
 
   function init() {

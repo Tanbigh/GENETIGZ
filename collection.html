@@ -53,14 +53,25 @@
     </a>
   </div>
 
-  <!-- Populated dynamically by collections.js (renderPersistentSidebar,
-       'link' mode) from the real collections in
-       data/collections-index.js. This page has no per-collection
-       sections of its own (it renders one selected collection into a
-       single gallery pane below), so each entry is a plain link to
-       collection.html?slug=<slug>, reusing the ?slug= handling this
-       page's own script already has. Same markup/classes as index.html. -->
+  <!-- Populated dynamically by product-filters.js: "All Products" +
+       one entry per distinct productType found across every loaded
+       collection (see data/lonewolf.js for where productType is set
+       per product). Same markup/classes as index.html. -->
   <ul class="sidebar-list" id="sidebarList" aria-live="polite"></ul>
+
+  <!-- Color + Size filters, populated by product-filters.js, scoped
+       to whichever category is currently active. -->
+  <div class="sidebar-filters" id="sidebarFilters">
+    <div class="sidebar-filter-group">
+      <p class="sidebar-filter-heading">Color</p>
+      <div class="swatch-row" id="sidebarColorSwatches"></div>
+    </div>
+    <div class="sidebar-filter-group">
+      <p class="sidebar-filter-heading">Size</p>
+      <div class="size-row" id="sidebarSizeChips"></div>
+    </div>
+    <button type="button" class="sidebar-filter-clear" id="sidebarFilterClear" hidden>Clear filters</button>
+  </div>
 
   <div class="sidebar-bottom">
     <a href="collection.html" class="sidebar-viewall">
@@ -216,6 +227,11 @@
           <div class="spec-row"><dt>Notes</dt><dd id="modalNotes">—</dd></div>
         </dl>
 
+        <button type="button" class="btn-size-guide" id="modalSizeGuideBtn">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M8 4v16M13 4v16M18 4v16"/></svg>
+          Size Guide
+        </button>
+
         <a href="#" id="modalWhatsapp" class="btn-primary btn-whatsapp" target="_blank" rel="noopener">
           Order on WhatsApp
         </a>
@@ -232,6 +248,7 @@
 <script src="collections.js"></script>
 <script src="modal.js"></script>
 <script src="script.js"></script>
+<script src="product-filters.js"></script>
 
 <!-- This page's own script: loads every collection's data file (so the
      sidebar/tabs can list them all), then renders ONLY the selected
@@ -413,12 +430,13 @@
       syncActiveHighlight();
       renderGalleryContent();
 
-      // Persistent left #sidebar (separate from the .collections-sidebar
-      // browser above) — same dynamic nav as index.html, in 'link' mode
-      // since this page has no per-collection sections to scroll to.
-      if (window.GZ.renderPersistentSidebar) {
-        window.GZ.renderPersistentSidebar(state.collections, 'link');
-      }
+      // NOTE: the persistent left #sidebar's #sidebarList used to be
+      // populated here (via window.GZ.renderPersistentSidebar) with a
+      // plain list of collection/drop names. It's now owned by
+      // product-filters.js, which renders dynamic Product Categories
+      // + Color/Size filters there instead — this .collections-sidebar
+      // browser (below, inside <main>) is unrelated and still lets
+      // people browse by drop name exactly as before.
 
       var toggle = document.getElementById('collectionsSidebarToggle');
       var sidebar = document.getElementById('collectionsSidebar');

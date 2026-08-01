@@ -12,6 +12,26 @@
    "<name> (back)" are the SAME product — one card, two gallery
    images. A product with only one photo (no front/back suffix)
    is still one card; just omit `images.back`.
+
+   NEW FIELDS (additive, required for the category/color/size
+   filtering + Size Guide feature — see product-filters.js):
+
+   - productType: human-readable garment category shown directly
+     in the sidebar's "Product Categories" list. This is the ONLY
+     place a category label is ever written — product-filters.js
+     never hardcodes a category list, it just reads this field off
+     every product across every collection and de-duplicates. Add
+     a new productType string here (or in a future collection file)
+     and it appears in the sidebar automatically, no code changes.
+
+   - fit: 'regular' | 'oversized'. Decides which of the two Size
+     Guide charts opens from the product modal, and which official
+     color chart a product's swatches are resolved against.
+
+   `category` (below) is left exactly as it was — it's the
+   collection/drop slug ('lonewolf'), unrelated to productType, and
+   nothing else in the codebase reads it, so leaving it in place is
+   harmless and avoids touching unrelated behavior.
 ============================================================== */
 
 (function () {
@@ -26,6 +46,7 @@
     products: [
       {
         id: 'lw-001', code: 'LW-001', category: 'lonewolf',
+        productType: 'Oversized T-Shirts', fit: 'oversized',
         name: 'Vintage',
         fabric: '240GSM combed cotton, heavyweight',
         sizes: 'S · M · L · XL · XXL',
@@ -39,6 +60,7 @@
       },
       {
         id: 'lw-002', code: 'LW-002', category: 'lonewolf',
+        productType: 'Oversized T-Shirts', fit: 'oversized',
         name: 'Vintage Soul',
         fabric: '240GSM combed cotton, heavyweight',
         sizes: 'S · M · L · XL · XXL',
@@ -52,6 +74,7 @@
       },
       {
         id: 'lw-003', code: 'LW-003', category: 'lonewolf',
+        productType: 'Oversized T-Shirts', fit: 'oversized',
         name: 'DND',
         fabric: '240GSM combed cotton, heavyweight',
         sizes: 'S · M · L · XL · XXL',
@@ -62,6 +85,7 @@
       },
       {
         id: 'lw-004', code: 'LW-004', category: 'lonewolf',
+        productType: 'Oversized T-Shirts', fit: 'oversized',
         name: 'Velocity 911',
         fabric: '240GSM combed cotton, heavyweight',
         sizes: 'S · M · L · XL · XXL',
@@ -75,6 +99,7 @@
       },
       {
         id: 'lw-005', code: 'LW-005', category: 'lonewolf',
+        productType: 'Oversized T-Shirts', fit: 'oversized',
         name: 'Man With A Plan',
         fabric: '240GSM combed cotton, heavyweight',
         sizes: 'S · M · L · XL · XXL',
