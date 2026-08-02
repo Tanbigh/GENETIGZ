@@ -53,25 +53,14 @@
     </a>
   </div>
 
-  <!-- Populated dynamically by product-filters.js: "All Products" +
-       one entry per distinct productType found across every loaded
-       collection (see data/lonewolf.js for where productType is set
-       per product). Same markup/classes as index.html. -->
+  <!-- Populated dynamically by collections.js (renderPersistentSidebar,
+       'link' mode) from the real collections in
+       data/collections-index.js. This page has no per-collection
+       sections of its own (it renders one selected collection into a
+       single gallery pane below), so each entry is a plain link to
+       collection.html?slug=<slug>, reusing the ?slug= handling this
+       page's own script already has. Same markup/classes as index.html. -->
   <ul class="sidebar-list" id="sidebarList" aria-live="polite"></ul>
-
-  <!-- Color + Size filters, populated by product-filters.js, scoped
-       to whichever category is currently active. -->
-  <div class="sidebar-filters" id="sidebarFilters">
-    <div class="sidebar-filter-group">
-      <p class="sidebar-filter-heading">Color</p>
-      <div class="swatch-row" id="sidebarColorSwatches"></div>
-    </div>
-    <div class="sidebar-filter-group">
-      <p class="sidebar-filter-heading">Size</p>
-      <div class="size-row" id="sidebarSizeChips"></div>
-    </div>
-    <button type="button" class="sidebar-filter-clear" id="sidebarFilterClear" hidden>Clear filters</button>
-  </div>
 
   <div class="sidebar-bottom">
     <a href="collection.html" class="sidebar-viewall">
@@ -247,8 +236,8 @@
 <script src="data/collections-index.js"></script>
 <script src="collections.js"></script>
 <script src="modal.js"></script>
+<script src="reference-modals.js"></script>
 <script src="script.js"></script>
-<script src="product-filters.js"></script>
 
 <!-- This page's own script: loads every collection's data file (so the
      sidebar/tabs can list them all), then renders ONLY the selected
@@ -430,13 +419,12 @@
       syncActiveHighlight();
       renderGalleryContent();
 
-      // NOTE: the persistent left #sidebar's #sidebarList used to be
-      // populated here (via window.GZ.renderPersistentSidebar) with a
-      // plain list of collection/drop names. It's now owned by
-      // product-filters.js, which renders dynamic Product Categories
-      // + Color/Size filters there instead — this .collections-sidebar
-      // browser (below, inside <main>) is unrelated and still lets
-      // people browse by drop name exactly as before.
+      // Persistent left #sidebar (separate from the .collections-sidebar
+      // browser above) — same dynamic nav as index.html, in 'link' mode
+      // since this page has no per-collection sections to scroll to.
+      if (window.GZ.renderPersistentSidebar) {
+        window.GZ.renderPersistentSidebar(state.collections, 'link');
+      }
 
       var toggle = document.getElementById('collectionsSidebarToggle');
       var sidebar = document.getElementById('collectionsSidebar');

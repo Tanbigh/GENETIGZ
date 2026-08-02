@@ -5,13 +5,11 @@
    and hydrates the front/back images through the same progressive
    placeholder system used everywhere else on the site.
 
-   ADDED: Size Guide. The modal already shows "Available Sizes" as
-   text — this adds a button that opens the correct chart IMAGE
-   (Regular or Oversized) based on the open product's `fit` field.
-   It's a second, lightweight overlay (.size-guide-overlay, styled
-   in collections.css) rather than reusing #productModal itself, so
-   it never interferes with the existing modal's own open/close
-   state or focus handling.
+   Size Guide: the modal already shows "Available Sizes" as text —
+   the button added below opens the shared reference-modals.js popup
+   (the same one used by the homepage's Regular/Oversized Size Chart
+   buttons) with a real HTML size-chart table for the open product's
+   `fit`, rather than a second, separate popup implementation.
 ============================================================== */
 
 (function () {
@@ -20,8 +18,6 @@
   var overlay, modal, closeBtn;
   var lastFocusedEl = null;
   var currentProduct = null;
-
-  var sizeGuideOverlay, sizeGuideImg;
 
   function getProduct(id){
     return window.GZ && window.GZ.getProductById ? window.GZ.getProductById(id) : null;
@@ -102,76 +98,27 @@
     overlay.classList.remove('is-open');
     overlay.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('no-scroll');
-    closeSizeGuide();
+
+    // Also close the Size Guide popup if it was opened on top of this modal.
+    if (window.GZ && window.GZ.closeReferenceModal) window.GZ.closeReferenceModal();
 
     if (lastFocusedEl && typeof lastFocusedEl.focus === 'function'){
       lastFocusedEl.focus();
     }
   }
 
-  /* ---------------------- Size Guide overlay ---------------------- */
-
-  function ensureSizeGuideOverlay(){
-    if (sizeGuideOverlay) return sizeGuideOverlay;
-
-    sizeGuideOverlay = document.createElement('div');
-    sizeGuideOverlay.className = 'size-guide-overlay';
-    sizeGuideOverlay.setAttribute('aria-hidden', 'true');
-
-    var box = document.createElement('div');
-    box.className = 'size-guide-box';
-
-    var innerClose = document.createElement('button');
-    innerClose.type = 'button';
-    innerClose.className = 'size-guide-close';
-    innerClose.setAttribute('aria-label', 'Close size guide');
-    innerClose.innerHTML = '&times;';
-    innerClose.addEventListener('click', closeSizeGuide);
-
-    sizeGuideImg = document.createElement('img');
-    sizeGuideImg.alt = 'Size chart';
-
-    box.appendChild(innerClose);
-    box.appendChild(sizeGuideImg);
-    sizeGuideOverlay.appendChild(box);
-    document.body.appendChild(sizeGuideOverlay);
-
-    sizeGuideOverlay.addEventListener('click', function (e) {
-      if (e.target === sizeGuideOverlay) closeSizeGuide();
-    });
-
-    return sizeGuideOverlay;
-  }
-
-  function openSizeGuide(fit){
-    ensureSizeGuideOverlay();
-    var isOversized = fit === 'oversized';
-    sizeGuideImg.src = isOversized ? 'images/size-charts/oversized.jpeg' : 'images/size-charts/regular.jpeg';
-    sizeGuideImg.alt = (isOversized ? 'Oversized fit' : 'Regular fit') + ' size chart';
-    sizeGuideOverlay.classList.add('is-open');
-    sizeGuideOverlay.setAttribute('aria-hidden', 'false');
-  }
-
-  function closeSizeGuide(){
-    if (!sizeGuideOverlay) return;
-    sizeGuideOverlay.classList.remove('is-open');
-    sizeGuideOverlay.setAttribute('aria-hidden', 'true');
-  }
+  /* ---------------------- Size Guide trigger ---------------------- */
 
   function initSizeGuideTrigger(){
     var btn = document.getElementById('modalSizeGuideBtn');
     if (!btn) return;
     btn.addEventListener('click', function () {
+      if (!window.GZ || !window.GZ.openReferenceModal) return;
       // Falls back to the Regular chart if a product hasn't been given
-      // a `fit` field yet (see data/lonewolf.js for the field), so the
+      // a `fit` field yet (see data/lonewolf.js for that field), so the
       // button always does something useful rather than silently failing.
-      openSizeGuide(currentProduct ? currentProduct.fit : 'regular');
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && sizeGuideOverlay && sizeGuideOverlay.classList.contains('is-open')){
-        closeSizeGuide();
-      }
+      var isOversized = currentProduct && currentProduct.fit === 'oversized';
+      window.GZ.openReferenceModal(isOversized ? 'oversized-size' : 'regular-size');
     });
   }
 

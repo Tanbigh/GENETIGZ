@@ -73,58 +73,6 @@
   </div>
 </header>
 
-<!-- Persistent left sidebar — Product Categories (dynamic, populated
-     by product-filters.js from each product's own `productType`
-     field — never hardcoded here) plus a Filters block (Color/Size).
-     Same markup/classes as collection.html's sidebar so the styling
-     and mobile drawer behavior (via script.js's initMobileSidebar)
-     is identical across both pages. -->
-<nav id="sidebar" class="sidebar" aria-label="Product categories and filters">
-  <div class="sidebar-top">
-    <a href="#top" class="sidebar-logo" data-scroll="#top" aria-label="GENETIGZ — back to top">
-      <span class="sidebar-logo-mark">
-        <img src="images/logo/logo-mark-180.png" alt="" width="180" height="180" loading="eager">
-      </span>
-    </a>
-  </div>
-
-  <!-- Populated by product-filters.js: "All Products" + one entry
-       per distinct productType found across every loaded collection. -->
-  <ul class="sidebar-list" id="sidebarList" aria-live="polite"></ul>
-
-  <!-- Color + Size filters, also populated by product-filters.js,
-       scoped to whichever category is currently active. -->
-  <div class="sidebar-filters" id="sidebarFilters">
-    <div class="sidebar-filter-group">
-      <p class="sidebar-filter-heading">Color</p>
-      <div class="swatch-row" id="sidebarColorSwatches"></div>
-    </div>
-    <div class="sidebar-filter-group">
-      <p class="sidebar-filter-heading">Size</p>
-      <div class="size-row" id="sidebarSizeChips"></div>
-    </div>
-    <button type="button" class="sidebar-filter-clear" id="sidebarFilterClear" hidden>Clear filters</button>
-  </div>
-
-  <div class="sidebar-bottom">
-    <a href="collection.html" class="sidebar-viewall">
-      <span>View All Collections</span>
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </a>
-    <a href="https://wa.me/917001494960?text=Hi%20Genetigz%2C%20I%27d%20like%20to%20customize%20a%20piece."
-       class="sidebar-customize" target="_blank" rel="noopener">
-      <span>Customize</span>
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </a>
-  </div>
-</nav>
-
-<!-- Mobile nav toggle -->
-<button id="navToggle" class="nav-toggle" aria-label="Open menu" aria-expanded="false">
-  <span></span><span></span><span></span>
-</button>
-<div id="sidebarOverlay" class="sidebar-overlay"></div>
-
 <main id="top">
 
   <!-- ============================================
@@ -157,18 +105,22 @@
         </p>
 
         <div class="hero-quicklinks">
-          <a href="regular-colour-palette.html" class="hero-quicklink">
+          <button type="button" class="hero-quicklink" data-reference-modal="regular-color">
             <span class="hero-quicklink-label">Regular<br>Colour Palette</span>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-          <a href="oversized-colour-palette.html" class="hero-quicklink">
+          </button>
+          <button type="button" class="hero-quicklink" data-reference-modal="oversized-color">
             <span class="hero-quicklink-label">Oversized<br>Colour Palette</span>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
-          <a href="size-chart.html" class="hero-quicklink">
-            <span class="hero-quicklink-label">Size<br>Chart</span>
+          </button>
+          <button type="button" class="hero-quicklink" data-reference-modal="regular-size">
+            <span class="hero-quicklink-label">Regular<br>Size Chart</span>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </a>
+          </button>
+          <button type="button" class="hero-quicklink" data-reference-modal="oversized-size">
+            <span class="hero-quicklink-label">Oversized<br>Size Chart</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
         </div>
 
         <div class="hero-actions">
@@ -445,7 +397,7 @@
 <script src="data/collections-index.js"></script>
 <script src="collections.js"></script>
 <script src="modal.js"></script>
-<script src="product-filters.js"></script>
+<script src="reference-modals.js"></script>
 <script src="script.js"></script>
 
 <!-- Login-gated WhatsApp ordering (see order.js). Purely additive —
