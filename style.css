@@ -521,11 +521,12 @@ a.brand:hover .brand-mark,
 }
 
 /* ==============================================================
-   MAIN — full-width now that the persistent left sidebar has
-   been removed (sidebar CSS below is left in place but unused,
-   since nothing in the DOM references it anymore).
+   MAIN — offset to clear the persistent fixed-position left
+   sidebar (see .sidebar above, position: fixed, width: var(--sidebar-w)).
+   Reset back to 0 on mobile/tablet in responsive.css, where the
+   sidebar becomes an off-canvas drawer instead.
 ============================================================== */
-main{ margin-left: 0; }
+main{ margin-left: var(--sidebar-w); }
 
 /* ==============================================================
    HERO

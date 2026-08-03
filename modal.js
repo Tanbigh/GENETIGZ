@@ -67,7 +67,7 @@
     var waLink = document.getElementById('modalWhatsapp');
     if (waLink){
       var msg = 'Hi Genetigz, I\'d like to order the ' + product.name + ' (' + product.code + ').';
-      waLink.href = 'https://wa.me/918145532620?text=' + encodeURIComponent(msg);
+      waLink.href = 'https://wa.me/917001494960?text=' + encodeURIComponent(msg);
     }
 
     // Resolve the two modal images now that data-src/data-eager are set.
