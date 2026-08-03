@@ -522,11 +522,14 @@ a.brand:hover .brand-mark,
 
 /* ==============================================================
    MAIN — offset to clear the persistent fixed-position left
-   sidebar (see .sidebar above, position: fixed, width: var(--sidebar-w)).
-   Reset back to 0 on mobile/tablet in responsive.css, where the
-   sidebar becomes an off-canvas drawer instead.
+   sidebar (see .sidebar above, position: fixed, width: var(--sidebar-w)),
+   scoped to only the page(s) that actually render that sidebar
+   (body.has-sidebar — currently collection.html). Pages without it
+   (currently index.html) get no offset and no reserved space at all.
+   Reset back to 0 on mobile/tablet in responsive.css regardless,
+   where the sidebar becomes an off-canvas drawer instead.
 ============================================================== */
-main{ margin-left: var(--sidebar-w); }
+body.has-sidebar main{ margin-left: var(--sidebar-w); }
 
 /* ==============================================================
    HERO
