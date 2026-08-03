@@ -39,7 +39,7 @@
   }
 
   function whatsappLink(product) {
-    var msg = 'Hi Genetigz, I\'d like to order the ' + product.name + ' (' + product.code + ').';
+    var msg = 'Hi Genetigz, I\'d like to order the ' + product.name + '.';
     return 'https://wa.me/917001494960?text=' + encodeURIComponent(msg);
   }
 
@@ -67,6 +67,7 @@
           '<span>' + product.colors.split(',')[0] + '</span>' +
           '<span class="view-details">View Details →</span>' +
         '</div>' +
+        '<a href="' + whatsappLink(product) + '" class="btn-primary btn-whatsapp product-card-whatsapp" target="_blank" rel="noopener" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()">Order on WhatsApp</a>' +
       '</div>';
 
     return card;

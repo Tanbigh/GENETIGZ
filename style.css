@@ -958,6 +958,7 @@ main{ margin-left: var(--sidebar-w); }
   transition: color .3s var(--ease), letter-spacing .3s var(--ease);
 }
 .product-card:hover .product-card-foot span.view-details{ color: var(--accent); letter-spacing: .12em; }
+.product-card-whatsapp{ margin-top: 14px; }
 
 /* ==============================================================
    FOOTER
