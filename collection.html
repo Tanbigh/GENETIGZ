@@ -100,6 +100,23 @@
 
 <main id="top">
 
+  <!-- ============================================
+       PRODUCT TYPE NAV — full-width bar directly under the topbar,
+       sitewide (same markup as index.html). Plain underlined nav
+       links, not boxed buttons/pills. product-type-nav.js reads
+       ?type= from this page's own URL to underline the active link
+       AND to filter #collectionsGalleryGrid below.
+  ============================================= -->
+  <nav class="type-nav" aria-label="Shop by product type">
+    <div class="type-nav-inner">
+      <a href="collection.html" class="type-nav-link" data-type="all">All</a>
+      <a href="collection.html?type=oversized" class="type-nav-link" data-type="oversized">Oversized</a>
+      <a href="collection.html?type=regular" class="type-nav-link" data-type="regular">Regular</a>
+      <a href="collection.html?type=polo" class="type-nav-link" data-type="polo">Polo</a>
+      <a href="collection.html?type=tank-top" class="type-nav-link" data-type="tank-top">Tank Top</a>
+    </div>
+  </nav>
+
   <!-- Collections Browser — sidebar list on the left, selected
        collection's gallery on the right. Only the selected collection's
        products are ever rendered into #collectionsGalleryPanel; nothing
@@ -109,33 +126,14 @@
     <div class="collection-head">
       <p class="eyebrow"><a href="index.html#collection" style="color:inherit;">← BACK TO HOME</a></p>
       <h2 class="collection-title">All Collections</h2>
-      <p class="collection-sub">Pick a collection from the list to view its full gallery.</p>
+      <p class="collection-sub">Pick a collection from the sidebar to view its full gallery.</p>
     </div>
 
-    <div class="collections-layout">
-
-      <!-- Mobile horizontal selector — swaps in for the sidebar below 900px -->
-      <div class="collections-tabs" id="collectionsTabs" role="tablist" aria-label="Collections"></div>
-
-      <!-- Sidebar list — desktop always visible, tablet collapsible -->
-      <nav class="collections-sidebar" id="collectionsSidebar" aria-label="Collections list">
-        <button class="collections-sidebar-toggle" id="collectionsSidebarToggle" type="button" aria-expanded="true">
-          <span>Collections</span>
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <ul class="collections-sidebar-list" id="collectionsSidebarList">
-          <!-- Populated by the script below: "All Collections" + one entry per collection -->
-        </ul>
-      </nav>
-
-      <!-- Selected collection's gallery -->
-      <div class="collections-gallery" id="collectionsGallery">
-        <div class="collections-gallery-panel" id="collectionsGalleryPanel">
-          <div class="collections-gallery-head" id="collectionsGalleryHead"></div>
-          <div class="product-grid" id="collectionsGalleryGrid"></div>
-        </div>
+    <div class="collections-gallery" id="collectionsGallery">
+      <div class="collections-gallery-panel" id="collectionsGalleryPanel">
+        <div class="collections-gallery-head" id="collectionsGalleryHead"></div>
+        <div class="product-grid" id="collectionsGalleryGrid"></div>
       </div>
-
     </div>
   </section>
 
@@ -245,12 +243,13 @@
 <script src="product-type-nav.js"></script>
 <script src="script.js"></script>
 
-<!-- This page's own script: loads every collection's data file (so the
-     sidebar/tabs can list them all), then renders ONLY the selected
-     collection's products into the gallery pane — never every collection
-     at once. Switching collections fades/slides the panel, updates the
-     highlighted sidebar entry, and syncs the URL's ?slug= so the "View
-     Collection" links from the homepage land pre-selected. -->
+<!-- This page's own script: loads every collection's data file, works
+     out which one (if any) the URL's ?slug= is asking for, and renders
+     that collection's products — or every product across every
+     collection if no slug is given — into the single gallery pane
+     below. There's no in-page collection switcher anymore; the
+     persistent left #sidebar's own links are the only way to change
+     collections, each one reloading this page with a new ?slug=. -->
 <script>
 (function () {
   'use strict';
@@ -263,68 +262,12 @@
     return params.get('slug');
   }
 
-  function setUrlSlug(slug) {
-    var url = new URL(window.location.href);
-    if (slug === ALL_SLUG) url.searchParams.delete('slug');
-    else url.searchParams.set('slug', slug);
-    window.history.replaceState({}, '', url);
-  }
-
   function allProducts() {
     var combined = [];
     state.collections.forEach(function (c) {
       c.products.forEach(function (p) { combined.push(p); });
     });
     return combined;
-  }
-
-  function buildSidebarEntry(slug, label, count, isTab) {
-    var el = document.createElement(isTab ? 'button' : 'li');
-    var btn = isTab ? el : document.createElement('button');
-
-    btn.type = 'button';
-    btn.className = isTab ? 'collections-tab' : 'collections-sidebar-link';
-    btn.setAttribute('data-slug', slug);
-    if (isTab) btn.setAttribute('role', 'tab');
-
-    if (isTab) {
-      btn.textContent = label;
-    } else {
-      var labelSpan = document.createElement('span');
-      labelSpan.className = 'cs-label';
-      labelSpan.textContent = label;
-      var countSpan = document.createElement('span');
-      countSpan.className = 'cs-count';
-      countSpan.textContent = String(count).padStart(2, '0');
-      btn.appendChild(labelSpan);
-      btn.appendChild(countSpan);
-      el.appendChild(btn);
-    }
-
-    btn.addEventListener('click', function () { selectCollection(slug); });
-    return el;
-  }
-
-  function renderSidebarAndTabs() {
-    var sidebarList = document.getElementById('collectionsSidebarList');
-    var tabs = document.getElementById('collectionsTabs');
-    sidebarList.innerHTML = '';
-    tabs.innerHTML = '';
-
-    var total = allProducts().length;
-    sidebarList.appendChild(buildSidebarEntry(ALL_SLUG, 'All Collections', total, false));
-    tabs.appendChild(buildSidebarEntry(ALL_SLUG, 'All Collections', total, true));
-
-    state.collections.forEach(function (c) {
-      sidebarList.appendChild(buildSidebarEntry(c.slug, c.name, c.products.length, false));
-      tabs.appendChild(buildSidebarEntry(c.slug, c.name, c.products.length, true));
-    });
-  }
-
-  function syncActiveHighlight() {
-    document.querySelectorAll('.collections-sidebar-link, .collections-tab').forEach(function (el) {
-      el.classList.toggle('is-active', el.getAttribute('data-slug') === state.active);
-    });
   }
 
   function renderGalleryContent() {
@@ -385,23 +328,6 @@
     if (window.GZ.applyCollectionsReveal) window.GZ.applyCollectionsReveal(panel);
   }
 
-  function selectCollection(slug) {
-    if (slug === state.active) return;
-    state.active = slug;
-    syncActiveHighlight();
-    setUrlSlug(slug);
-
-    var panel = document.getElementById('collectionsGalleryPanel');
-    panel.classList.add('is-switching');
-
-    window.setTimeout(function () {
-      renderGalleryContent();
-      // Force reflow so the fade-back-in transition actually replays.
-      void panel.offsetWidth;
-      panel.classList.remove('is-switching');
-    }, 300);
-  }
-
   function init() {
     var slugs = window.GZ_COLLECTIONS_INDEX || [];
 
@@ -421,24 +347,13 @@
       var requested = getRequestedSlug();
       state.active = (requested && state.bySlug[requested]) ? requested : ALL_SLUG;
 
-      renderSidebarAndTabs();
-      syncActiveHighlight();
       renderGalleryContent();
 
-      // Persistent left #sidebar (separate from the .collections-sidebar
-      // browser above) — same dynamic nav as index.html, in 'link' mode
-      // since this page has no per-collection sections to scroll to.
+      // Persistent left #sidebar — the only collection switcher on this
+      // page now. Each link reloads with a new ?slug=, which the code
+      // above already reads on every load.
       if (window.GZ.renderPersistentSidebar) {
         window.GZ.renderPersistentSidebar(state.collections, 'link');
-      }
-
-      var toggle = document.getElementById('collectionsSidebarToggle');
-      var sidebar = document.getElementById('collectionsSidebar');
-      if (toggle && sidebar) {
-        toggle.addEventListener('click', function () {
-          var collapsed = sidebar.classList.toggle('is-collapsed');
-          toggle.setAttribute('aria-expanded', String(!collapsed));
-        });
       }
     });
   }

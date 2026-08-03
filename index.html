@@ -73,6 +73,23 @@
   </div>
 </header>
 
+<!-- ============================================
+     PRODUCT TYPE NAV — full-width bar directly under the topbar,
+     sitewide (same markup on collection.html). Plain underlined
+     nav links, not boxed buttons/pills. Each sends people to
+     collection.html?type=<slug>, which reads that param on load
+     and filters automatically — see product-type-nav.js.
+============================================= -->
+<nav class="type-nav" aria-label="Shop by product type">
+  <div class="type-nav-inner">
+    <a href="collection.html" class="type-nav-link" data-type="all">All</a>
+    <a href="collection.html?type=oversized" class="type-nav-link" data-type="oversized">Oversized</a>
+    <a href="collection.html?type=regular" class="type-nav-link" data-type="regular">Regular</a>
+    <a href="collection.html?type=polo" class="type-nav-link" data-type="polo">Polo</a>
+    <a href="collection.html?type=tank-top" class="type-nav-link" data-type="tank-top">Tank Top</a>
+  </div>
+</nav>
+
 <main id="top">
 
   <!-- ============================================
@@ -155,25 +172,6 @@
        inside .hero, which is a flex column with
        min-height: calc(100vh - var(--topbar-h)) — compounding the
        layout/alignment issues even further down the page. -->
-
-  <!-- ============================================
-       PRODUCT TYPE NAV — quick jump into a category.
-       Static links (this page has no flat grid of its own to filter
-       in place), sent to collection.html?type=<slug>, which reads
-       that param on load and applies the filter automatically —
-       see product-type-nav.js. Lives here (not on collection.html)
-       specifically so it never has to share space with that page's
-       left sidebar.
-  ============================================= -->
-  <nav class="product-type-nav" id="productTypeNav" aria-label="Shop by product type">
-    <div class="type-chip-row">
-      <a href="collection.html" class="type-chip">All</a>
-      <a href="collection.html?type=oversized" class="type-chip">Oversized</a>
-      <a href="collection.html?type=regular" class="type-chip">Regular</a>
-      <a href="collection.html?type=polo" class="type-chip">Polo</a>
-      <a href="collection.html?type=tank-top" class="type-chip">Tank Top</a>
-    </div>
-  </nav>
 
   <!-- ============================================
        QUALITY / MANIFESTO
@@ -419,6 +417,7 @@
 <script src="collections.js"></script>
 <script src="modal.js"></script>
 <script src="reference-modals.js"></script>
+<script src="product-type-nav.js"></script>
 <script src="script.js"></script>
 
 <!-- Login-gated WhatsApp ordering (see order.js). Purely additive —

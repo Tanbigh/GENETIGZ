@@ -87,125 +87,16 @@
    Reuses .collection / .collection-head / .eyebrow / .collection-title
    / .collection-sub / .product-grid / .product-card as-is.
 ============================================================== */
-.collections-layout{
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 42px;
-  align-items: start;
-}
-
-/* ---- Desktop / tablet sidebar ---- */
-.collections-sidebar{
-  position: sticky;
-  top: calc(var(--topbar-h) + 24px);
-  background: var(--bg-alt);
-  border: 1px solid var(--line);
-}
-
-.collections-sidebar-toggle{
-  display: none;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 15px 20px;
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--line);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink);
-  cursor: pointer;
-}
-.collections-sidebar-toggle svg{ transition: transform .3s var(--ease); flex-shrink: 0; }
-.collections-sidebar.is-collapsed .collections-sidebar-toggle svg{ transform: rotate(-90deg); }
-
-.collections-sidebar-list{
-  list-style: none;
-  margin: 0;
-  padding: 6px 0;
-  max-height: 2000px;
-  opacity: 1;
-  overflow: hidden;
-  transition: max-height .4s var(--ease), opacity .3s var(--ease), padding .3s var(--ease);
-}
-.collections-sidebar.is-collapsed .collections-sidebar-list{
-  max-height: 0;
-  opacity: 0;
-  padding: 0;
-}
-
-.collections-sidebar-link{
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  background: none;
-  border: none;
-  color: var(--ink-soft);
-  font-family: var(--font-structural);
-  font-size: 14px;
-  letter-spacing: .01em;
-  padding: 13px 20px;
-  text-align: left;
-  position: relative;
-  cursor: pointer;
-  transition: color .3s var(--ease), background .3s var(--ease), padding-left .3s var(--ease);
-}
-.collections-sidebar-link::before{
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--accent);
-  transform: scaleY(0);
-  transition: transform .35s var(--ease);
-}
-.collections-sidebar-link:hover,
-.collections-sidebar-link:focus-visible{ color: var(--ink); background: rgba(42,35,24,0.035); padding-left: 24px; }
-.collections-sidebar-link.is-active{ color: var(--ink); background: rgba(42,35,24,0.05); }
-.collections-sidebar-link.is-active::before,
-.collections-sidebar-link:hover::before{ transform: scaleY(1); }
-.collections-sidebar-link.is-active .cs-count{ color: var(--accent); }
-
-.cs-count{
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--muted);
-  flex-shrink: 0;
-}
-
-/* ---- Mobile horizontal selector (swaps in for the sidebar) ---- */
-.collections-tabs{
-  display: none;
-  gap: 8px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.collections-tabs::-webkit-scrollbar{ display: none; }
-.collections-tab{
-  flex-shrink: 0;
-  white-space: nowrap;
-  background: none;
-  border: 1px solid var(--line);
-  color: var(--ink-soft);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .06em;
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: all .3s var(--ease);
-}
-.collections-tab.is-active,
-.collections-tab:hover{ border-color: var(--brass); color: var(--ink); background: rgba(42,35,24,0.04); }
-
-/* ---- Gallery pane ---- */
+/* ---- Gallery pane — now the only thing in this section. The old
+   in-page .collections-sidebar (desktop) / .collections-tabs (mobile)
+   collection-picker has been removed entirely: the persistent left
+   #sidebar's own collection links (already reload with ?slug=) are
+   the only way to switch collections now, so this page never needs
+   a second, redundant nav for the same job. This also removes the
+   layout bug that made the old picker's count numbers appear to
+   float in their own column next to the persistent sidebar. ---- */
 .collections-gallery{ min-width: 0; }
-.collections-gallery-head{ margin-bottom: 32px; }
+.collections-gallery-head{ margin-bottom: 40px; }
 .collections-gallery-panel{
   opacity: 1;
   transform: translateY(0);
@@ -216,15 +107,18 @@
   transform: translateY(12px);
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 1200px){
-  .collections-layout{ grid-template-columns: 210px 1fr; gap: 30px; }
-  .collections-sidebar-toggle{ display: flex; }
-}
+/* More breathing room between the page heading and the grid below
+   it, and a slightly wider gap between cards, on this page only —
+   doesn't touch the homepage's own .product-grid instances. */
+#collectionsBrowser .collection-head{ margin-bottom: 48px; padding-left: 16px; }
+#collectionsBrowser .collections-gallery{ padding-left: 16px; }
+#collectionsBrowser .product-grid{ gap: 40px 28px; }
+
 @media (max-width: 900px){
-  .collections-layout{ grid-template-columns: 1fr; gap: 22px; }
-  .collections-sidebar{ display: none; }
-  .collections-tabs{ display: flex; margin-bottom: 4px; }
+  #collectionsBrowser .collection-head{ margin-bottom: 36px; padding-left: 0; }
+  #collectionsBrowser .collections-gallery{ padding-left: 0; }
+  #collectionsBrowser .product-grid{ gap: 28px 20px; }
+  .type-nav-inner{ padding-left: 20px; }
 }
 
 /* ==============================================================
@@ -383,60 +277,61 @@
 }
 
 /* ==============================================================
-   PRODUCT TYPE NAV — homepage row (All / Oversized / Regular /
-   Polo / Tank Top), directly below the hero. Lives on index.html,
-   not collection.html, specifically so it's never near that page's
-   left sidebar — see product-type-nav.js for the collection.html
-   side (reads ?type= from the URL instead of showing chips there).
-   Its own contained max-width + side padding, independent of any
-   sidebar layout, so it's centered the same way on every screen.
+   TYPE NAV — full-width category bar directly below the topbar,
+   on every page: All / Oversized / Regular / Polo / Tank Top.
+   Plain inline text links with an underline for the active state
+   (not boxed/pill buttons) — modeled on the category bars used by
+   Zara/Uniqlo/Nike rather than a filter-chip row. Placed as the
+   first child of <main> (see index.html/collection.html) so it
+   inherits the same sidebar-safe offset as the rest of the page's
+   content instead of needing its own positioning logic.
 ============================================================== */
-.product-type-nav{
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: 44px 48px 0;
+.type-nav{
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
 }
-.type-chip-row{
+.type-nav-inner{
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 44px;
+  padding: 18px 24px 18px 40px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.type-chip{
-  background: none;
-  border: 1px solid var(--line);
-  padding: 10px 20px;
+.type-nav-inner::-webkit-scrollbar{ display: none; }
+
+.type-nav-link{
+  position: relative;
+  flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: .06em;
+  font-size: 12px;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--ink-soft);
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  transition: border-color .25s var(--ease), color .25s var(--ease), background .25s var(--ease);
+  white-space: nowrap;
+  padding-bottom: 5px;
+  transition: color .25s var(--ease);
 }
-.type-chip:hover{ border-color: var(--brass); color: var(--ink); }
-.type-chip.is-active{
-  border-color: var(--brass);
+.type-nav-link::after{
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
   background: var(--brass);
-  color: var(--paper);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .3s var(--ease);
 }
+.type-nav-link:hover{ color: var(--ink); }
+.type-nav-link:hover::after{ transform: scaleX(1); }
+.type-nav-link.is-active{ color: var(--ink); }
+.type-nav-link.is-active::after{ transform: scaleX(1); }
 
-@media (max-width: 900px){
-  .product-type-nav{ padding: 36px 32px 0; }
-}
 @media (max-width: 640px){
-  .product-type-nav{ padding: 28px 20px 0; }
-  .type-chip-row{
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 2px;
-  }
-  .type-chip-row::-webkit-scrollbar{ display: none; }
-  .type-chip{ flex-shrink: 0; }
+  .type-nav-inner{ justify-content: flex-start; gap: 30px; padding: 15px 20px; }
 }
 
 /* Product cards hidden by the active Product Type filter on
@@ -452,23 +347,3 @@
   padding: 40px 0;
   text-align: center;
 }
-
-/* "Showing: Oversized — Clear filter" indicator, appended into
-   collection.html's .collection-head when a ?type= filter is active. */
-.active-type-filter{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 14px;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.active-type-filter-clear{
-  color: var(--brass);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.active-type-filter-clear:hover{ color: var(--ink); }

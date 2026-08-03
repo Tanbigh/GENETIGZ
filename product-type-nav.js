@@ -1,29 +1,25 @@
 /* ==============================================================
-   GENETIGZ — PRODUCT TYPE FILTER (URL-driven)
-   The category chips themselves now live as static links on the
-   homepage (index.html), just below the hero — see that file. Each
-   link points to collection.html?type=<slug>. This script's only
-   job is to run on collection.html, read that `type` param, and
-   apply the same filtering the old on-page chip row used to do
-   directly, plus show a small "Showing: X — Clear" indicator so
-   there's a way back to the full catalog without editing the URL.
+   GENETIGZ — PRODUCT TYPE NAV (full-width bar, every page)
+   The bar itself (All / Oversized / Regular / Polo / Tank Top) is
+   static markup — see the .type-nav block right after <main> opens
+   in both index.html and collection.html — since it's the same five
+   links everywhere. This script has two jobs:
 
-   Filtering itself works exactly as before: it never re-renders
-   cards, it only toggles `.is-filtered-out` on the `.product-card`
-   elements collection.html's own script (or collections.js) already
-   built, and re-applies whenever those cards change (switching the
-   collection/drop tabs) via a MutationObserver.
+   1. On every page: read `type` from the current URL and underline
+      the matching link (`.type-nav-link.is-active`), so landing on
+      collection.html?type=oversized shows Oversized as active, and
+      the homepage (no ?type=) shows All as active by default.
+
+   2. Only where a product grid actually exists (collection.html's
+      #collectionsGalleryGrid): apply that same category as a filter,
+      toggling `.is-filtered-out` on the `.product-card` elements
+      collection.html's own script already built — never re-rendering
+      cards itself — and re-applying whenever those cards change (e.g.
+      a fresh ?slug= collection loads) via a MutationObserver.
 ============================================================== */
 
 (function () {
   'use strict';
-
-  var CATEGORY_LABELS = {
-    'oversized': 'Oversized',
-    'regular': 'Regular',
-    'polo': 'Polo',
-    'tank-top': 'Tank Top'
-  };
 
   var state = { category: 'all' };
   var productsById = {};
@@ -66,8 +62,7 @@
 
   function readTypeFromURL() {
     var params = new URLSearchParams(window.location.search);
-    var type = params.get('type');
-    return (type && CATEGORY_LABELS[type]) ? type : 'all';
+    return params.get('type') || 'all';
   }
 
   function productMatches(product) {
@@ -90,34 +85,10 @@
     if (msg) msg.remove();
   }
 
-  function renderIndicator() {
-    var head = document.querySelector('.collection-head');
-    if (!head) return;
-    var existing = document.getElementById('activeTypeFilter');
-
-    if (state.category === 'all') {
-      if (existing) existing.remove();
-      return;
-    }
-
-    if (!existing) {
-      existing = document.createElement('p');
-      existing.id = 'activeTypeFilter';
-      existing.className = 'active-type-filter';
-      head.appendChild(existing);
-    }
-    existing.innerHTML = '';
-
-    var label = document.createElement('span');
-    label.textContent = 'Showing: ' + (CATEGORY_LABELS[state.category] || state.category);
-
-    var clear = document.createElement('a');
-    clear.href = 'collection.html';
-    clear.className = 'active-type-filter-clear';
-    clear.textContent = 'Clear filter';
-
-    existing.appendChild(label);
-    existing.appendChild(clear);
+  function syncActiveNav() {
+    document.querySelectorAll('.type-nav-link[data-type]').forEach(function (link) {
+      link.classList.toggle('is-active', link.getAttribute('data-type') === state.category);
+    });
   }
 
   function applyFilter() {
@@ -134,8 +105,6 @@
       if (hasCards && !visibleInGallery) ensureEmptyMessage(galleryGrid);
       else removeEmptyMessage(galleryGrid);
     }
-
-    renderIndicator();
   }
 
   function initObserver() {
@@ -149,9 +118,11 @@
   }
 
   function init() {
-    if (!document.getElementById('collectionsGalleryGrid')) return; // collection.html only
     state.category = readTypeFromURL();
-    if (state.category === 'all') return; // nothing to filter or show
+    syncActiveNav();
+
+    if (!document.getElementById('collectionsGalleryGrid')) return; // filtering only applies on collection.html
+    if (state.category === 'all') return; // nothing to filter
 
     waitForCollections(function () {
       getAllProducts().forEach(function (p) { productsById[p.id] = p; });
