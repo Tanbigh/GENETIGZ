@@ -1,31 +1,29 @@
 /* ==============================================================
-   GENETIGZ — PRODUCT TYPE NAV
-   Horizontal chip row at the very top of collection.html, above the
-   product grid: All / Oversized / Regular / Polo / Tank Top.
+   GENETIGZ — PRODUCT TYPE FILTER (URL-driven)
+   The category chips themselves now live as static links on the
+   homepage (index.html), just below the hero — see that file. Each
+   link points to collection.html?type=<slug>. This script's only
+   job is to run on collection.html, read that `type` param, and
+   apply the same filtering the old on-page chip row used to do
+   directly, plus show a small "Showing: X — Clear" indicator so
+   there's a way back to the full catalog without editing the URL.
 
-   The four category labels are a fixed, explicitly requested set
-   (unlike the earlier per-drop sidebar, which was fully dynamic) —
-   but matching against products still reads live off each product's
-   own `productType` field (see data/lonewolf.js), so adding more
-   products under an existing category needs zero code changes.
-
-   Filtering works the same way the earlier sidebar filter did: it
-   never re-renders cards itself, it only toggles `.is-filtered-out`
-   on the `.product-card` elements collection.html's own script (or
-   collections.js) already built, and re-applies whenever those cards
-   change (switching the collection/drop tabs) via a MutationObserver.
+   Filtering itself works exactly as before: it never re-renders
+   cards, it only toggles `.is-filtered-out` on the `.product-card`
+   elements collection.html's own script (or collections.js) already
+   built, and re-applies whenever those cards change (switching the
+   collection/drop tabs) via a MutationObserver.
 ============================================================== */
 
 (function () {
   'use strict';
 
-  var CATEGORIES = [
-    { key: 'all', label: 'All' },
-    { key: 'oversized', label: 'Oversized' },
-    { key: 'regular', label: 'Regular' },
-    { key: 'polo', label: 'Polo' },
-    { key: 'tank-top', label: 'Tank Top' }
-  ];
+  var CATEGORY_LABELS = {
+    'oversized': 'Oversized',
+    'regular': 'Regular',
+    'polo': 'Polo',
+    'tank-top': 'Tank Top'
+  };
 
   var state = { category: 'all' };
   var productsById = {};
@@ -66,38 +64,10 @@
     }, 50);
   }
 
-  function buildChip(category) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'type-chip';
-    btn.textContent = category.label;
-    btn.setAttribute('data-type', category.key);
-    btn.classList.toggle('is-active', state.category === category.key);
-
-    btn.addEventListener('click', function () {
-      if (state.category === category.key) return;
-      state.category = category.key;
-      syncActive();
-      applyFilter();
-    });
-
-    return btn;
-  }
-
-  function syncActive() {
-    document.querySelectorAll('.type-chip').forEach(function (chip) {
-      chip.classList.toggle('is-active', chip.getAttribute('data-type') === state.category);
-    });
-  }
-
-  function render() {
-    var host = document.getElementById('productTypeNav');
-    if (!host) return;
-    host.innerHTML = '';
-    var row = document.createElement('div');
-    row.className = 'type-chip-row';
-    CATEGORIES.forEach(function (c) { row.appendChild(buildChip(c)); });
-    host.appendChild(row);
+  function readTypeFromURL() {
+    var params = new URLSearchParams(window.location.search);
+    var type = params.get('type');
+    return (type && CATEGORY_LABELS[type]) ? type : 'all';
   }
 
   function productMatches(product) {
@@ -110,7 +80,7 @@
     if (!msg) {
       msg = document.createElement('div');
       msg.className = 'filters-empty-message';
-      msg.textContent = 'No products found matching the selected filters.';
+      msg.textContent = 'No products found matching the selected filter.';
       container.appendChild(msg);
     }
   }
@@ -118,6 +88,36 @@
   function removeEmptyMessage(container) {
     var msg = container.querySelector(':scope > .filters-empty-message');
     if (msg) msg.remove();
+  }
+
+  function renderIndicator() {
+    var head = document.querySelector('.collection-head');
+    if (!head) return;
+    var existing = document.getElementById('activeTypeFilter');
+
+    if (state.category === 'all') {
+      if (existing) existing.remove();
+      return;
+    }
+
+    if (!existing) {
+      existing = document.createElement('p');
+      existing.id = 'activeTypeFilter';
+      existing.className = 'active-type-filter';
+      head.appendChild(existing);
+    }
+    existing.innerHTML = '';
+
+    var label = document.createElement('span');
+    label.textContent = 'Showing: ' + (CATEGORY_LABELS[state.category] || state.category);
+
+    var clear = document.createElement('a');
+    clear.href = 'collection.html';
+    clear.className = 'active-type-filter-clear';
+    clear.textContent = 'Clear filter';
+
+    existing.appendChild(label);
+    existing.appendChild(clear);
   }
 
   function applyFilter() {
@@ -134,6 +134,8 @@
       if (hasCards && !visibleInGallery) ensureEmptyMessage(galleryGrid);
       else removeEmptyMessage(galleryGrid);
     }
+
+    renderIndicator();
   }
 
   function initObserver() {
@@ -147,8 +149,9 @@
   }
 
   function init() {
-    if (!document.getElementById('productTypeNav')) return;
-    render(); // chips appear immediately; filtering activates once data is ready
+    if (!document.getElementById('collectionsGalleryGrid')) return; // collection.html only
+    state.category = readTypeFromURL();
+    if (state.category === 'all') return; // nothing to filter or show
 
     waitForCollections(function () {
       getAllProducts().forEach(function (p) { productsById[p.id] = p; });

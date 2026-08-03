@@ -383,12 +383,18 @@
 }
 
 /* ==============================================================
-   PRODUCT TYPE NAV — horizontal chip row at the top of
-   collection.html: All / Oversized / Regular / Polo / Tank Top.
-   Scrolls horizontally on mobile instead of wrapping/collapsing.
+   PRODUCT TYPE NAV — homepage row (All / Oversized / Regular /
+   Polo / Tank Top), directly below the hero. Lives on index.html,
+   not collection.html, specifically so it's never near that page's
+   left sidebar — see product-type-nav.js for the collection.html
+   side (reads ?type= from the URL instead of showing chips there).
+   Its own contained max-width + side padding, independent of any
+   sidebar layout, so it's centered the same way on every screen.
 ============================================================== */
 .product-type-nav{
-  margin: 0 0 36px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 44px 48px 0;
 }
 .type-chip-row{
   display: flex;
@@ -404,6 +410,9 @@
   letter-spacing: .06em;
   text-transform: uppercase;
   color: var(--ink-soft);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   transition: border-color .25s var(--ease), color .25s var(--ease), background .25s var(--ease);
 }
@@ -414,7 +423,11 @@
   color: var(--paper);
 }
 
+@media (max-width: 900px){
+  .product-type-nav{ padding: 36px 32px 0; }
+}
 @media (max-width: 640px){
+  .product-type-nav{ padding: 28px 20px 0; }
   .type-chip-row{
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -426,8 +439,9 @@
   .type-chip{ flex-shrink: 0; }
 }
 
-/* Product cards hidden by the active Product Type filter — same
-   mechanism the earlier sidebar filter used. */
+/* Product cards hidden by the active Product Type filter on
+   collection.html (applied by product-type-nav.js from the URL's
+   ?type= param). */
 .product-card.is-filtered-out{ display: none !important; }
 
 .filters-empty-message{
@@ -438,3 +452,23 @@
   padding: 40px 0;
   text-align: center;
 }
+
+/* "Showing: Oversized — Clear filter" indicator, appended into
+   collection.html's .collection-head when a ?type= filter is active. */
+.active-type-filter{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.active-type-filter-clear{
+  color: var(--brass);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.active-type-filter-clear:hover{ color: var(--ink); }
