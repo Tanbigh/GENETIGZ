@@ -373,16 +373,18 @@
             <dt>Print Area</dt>
             <dd id="modalPrintArea">—</dd>
           </div>
-          <div class="spec-row">
-            <dt>Notes</dt>
-            <dd id="modalNotes">—</dd>
-          </div>
         </dl>
 
-        <button type="button" class="btn-size-guide" id="modalSizeGuideBtn">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M8 4v16M13 4v16M18 4v16"/></svg>
-          Size Guide
-        </button>
+        <!-- Always shows BOTH fit charts, for every product — filled in
+             once by reference-modals.js's renderInlineSizeCharts(), which
+             reuses the exact same table-building code as the homepage's
+             Regular/Oversized Size Chart popups (no duplicated markup). -->
+        <div class="modal-size-chart" id="modalSizeChart"></div>
+
+        <div class="modal-note">
+          <p class="modal-note-heading">Note</p>
+          <p class="modal-note-text">This design can be printed on either an Oversized Fit or a Regular Fit t-shirt. Customers can choose their preferred fit, color, and size, and the selected design will be printed accordingly before delivery.</p>
+        </div>
 
         <a href="#" id="modalWhatsapp" class="btn-primary btn-whatsapp" target="_blank" rel="noopener">
           Order on WhatsApp

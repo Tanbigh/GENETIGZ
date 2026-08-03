@@ -208,6 +208,42 @@
     }
   };
 
+  // Used by the product modal (modal.js) to show BOTH fit charts inline,
+  // always, for every product — reuses buildSizeTable()/the same chart
+  // data as the popup version above instead of duplicating table markup.
+  function renderInlineSizeCharts(container) {
+    if (!container) return;
+    container.innerHTML = '';
+
+    var heading = document.createElement('p');
+    heading.className = 'modal-size-chart-heading';
+    heading.textContent = 'Size Chart';
+    container.appendChild(heading);
+
+    var regularBlock = document.createElement('div');
+    regularBlock.className = 'modal-size-chart-block';
+    var regularHeading = document.createElement('p');
+    regularHeading.className = 'modal-size-chart-subheading';
+    regularHeading.textContent = 'Regular Fit Size Chart';
+    regularBlock.appendChild(regularHeading);
+    regularBlock.appendChild(buildSizeTable(REGULAR_SIZE_ROWS, REGULAR_SIZE_COLS));
+    container.appendChild(regularBlock);
+
+    var oversizedBlock = document.createElement('div');
+    oversizedBlock.className = 'modal-size-chart-block';
+    var oversizedHeading = document.createElement('p');
+    oversizedHeading.className = 'modal-size-chart-subheading';
+    oversizedHeading.textContent = 'Oversized Fit Size Chart';
+    oversizedBlock.appendChild(oversizedHeading);
+    oversizedBlock.appendChild(buildSizeTable(OVERSIZED_SIZE_ROWS, OVERSIZED_SIZE_COLS));
+    container.appendChild(oversizedBlock);
+
+    var note = document.createElement('p');
+    note.className = 'size-table-note';
+    note.textContent = 'All measurements in inches, laid flat. A variance of up to \u00BD" may occur due to fabric and manual measuring.';
+    container.appendChild(note);
+  }
+
   function openReferenceModal(type) {
     var config = CONFIGS[type];
     if (!config) return;
@@ -255,5 +291,6 @@
   window.GZ = window.GZ || {};
   window.GZ.openReferenceModal = openReferenceModal;
   window.GZ.closeReferenceModal = closeReferenceModal;
+  window.GZ.renderInlineSizeCharts = renderInlineSizeCharts;
 
 })();

@@ -45,7 +45,6 @@
     document.getElementById('modalSizes').textContent = product.sizes;
     document.getElementById('modalColors').textContent = product.colors;
     document.getElementById('modalPrintArea').textContent = product.printArea;
-    document.getElementById('modalNotes').textContent = product.notes;
 
     setImage(document.getElementById('modalFrontImage'), product.images.front, product.code, 'FRONT');
 
@@ -99,27 +98,20 @@
     overlay.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('no-scroll');
 
-    // Also close the Size Guide popup if it was opened on top of this modal.
-    if (window.GZ && window.GZ.closeReferenceModal) window.GZ.closeReferenceModal();
-
     if (lastFocusedEl && typeof lastFocusedEl.focus === 'function'){
       lastFocusedEl.focus();
     }
   }
 
-  /* ---------------------- Size Guide trigger ---------------------- */
+  /* ---------------------- Size Chart (always both fits, every product) ---------------------- */
+  // Content is identical for every product now, so it's built once here
+  // rather than re-rendered on every openModal() call. Reuses the same
+  // table-building code as the homepage's Size Chart popups.
 
-  function initSizeGuideTrigger(){
-    var btn = document.getElementById('modalSizeGuideBtn');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      if (!window.GZ || !window.GZ.openReferenceModal) return;
-      // Falls back to the Regular chart if a product hasn't been given
-      // a `fit` field yet (see data/lonewolf.js for that field), so the
-      // button always does something useful rather than silently failing.
-      var isOversized = currentProduct && currentProduct.fit === 'oversized';
-      window.GZ.openReferenceModal(isOversized ? 'oversized-size' : 'regular-size');
-    });
+  function initSizeChart(){
+    var container = document.getElementById('modalSizeChart');
+    if (!container || !window.GZ || !window.GZ.renderInlineSizeCharts) return;
+    window.GZ.renderInlineSizeCharts(container);
   }
 
   /* ---------------------- existing wiring ---------------------- */
@@ -170,7 +162,7 @@
 
     initCardTriggers();
     initCloseTriggers();
-    initSizeGuideTrigger();
+    initSizeChart();
   }
 
   document.addEventListener('DOMContentLoaded', init);

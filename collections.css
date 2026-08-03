@@ -329,23 +329,112 @@
 ============================================================== */
 
 /* ==============================================================
-   SIZE GUIDE BUTTON (inside #productModal) — matches the other
-   outline buttons already on the site.
+   PRODUCT MODAL — inline Size Chart section (both fits, always)
+   Sits inside .modal-info, between .modal-specs and .modal-note.
+   Reuses .size-table-wrap / .size-table / .size-table-note from the
+   reference-modal styles above — this only adds the two headings.
 ============================================================== */
-.btn-size-guide{
-  margin-top: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: 1px solid var(--line);
-  padding: 10px 16px;
+.modal-size-chart{
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+.modal-size-chart-heading{
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: .08em;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--ink);
-  cursor: pointer;
-  transition: border-color .25s var(--ease), color .25s var(--ease);
+  color: var(--muted);
+  margin: 0 0 16px;
 }
-.btn-size-guide:hover{ border-color: var(--brass); color: var(--brass); }
+.modal-size-chart-block + .modal-size-chart-block{ margin-top: 22px; }
+.modal-size-chart-subheading{
+  font-family: var(--font-structural);
+  font-size: 14px;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+/* ==============================================================
+   PRODUCT MODAL — universal fit/print Note panel
+   Fixed copy, identical for every product, sits below the Size
+   Chart section and above the WhatsApp order button.
+============================================================== */
+.modal-note{
+  margin-top: 22px;
+  padding: 16px 18px;
+  background: var(--bg-alt);
+  border: 1px solid var(--line);
+}
+.modal-note-heading{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.modal-note-text{
+  font-family: var(--font-structural);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ==============================================================
+   PRODUCT TYPE NAV — horizontal chip row at the top of
+   collection.html: All / Oversized / Regular / Polo / Tank Top.
+   Scrolls horizontally on mobile instead of wrapping/collapsing.
+============================================================== */
+.product-type-nav{
+  margin: 0 0 36px;
+}
+.type-chip-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.type-chip{
+  background: none;
+  border: 1px solid var(--line);
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: border-color .25s var(--ease), color .25s var(--ease), background .25s var(--ease);
+}
+.type-chip:hover{ border-color: var(--brass); color: var(--ink); }
+.type-chip.is-active{
+  border-color: var(--brass);
+  background: var(--brass);
+  color: var(--paper);
+}
+
+@media (max-width: 640px){
+  .type-chip-row{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .type-chip-row::-webkit-scrollbar{ display: none; }
+  .type-chip{ flex-shrink: 0; }
+}
+
+/* Product cards hidden by the active Product Type filter — same
+   mechanism the earlier sidebar filter used. */
+.product-card.is-filtered-out{ display: none !important; }
+
+.filters-empty-message{
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  padding: 40px 0;
+  text-align: center;
+}
