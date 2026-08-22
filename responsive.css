@@ -71,6 +71,17 @@
     padding-right: calc(20px + env(safe-area-inset-right));
   }
   .topbar-tag{ display: none; }
+
+  /* FIX 3 (overflow bug): body.has-sidebar main{ margin-left: var(--sidebar-w) }
+     in style.css is MORE SPECIFIC (0,1,2) than a bare "main{ margin-left:0 }"
+     override (0,0,1) — so on collection.html specifically, the old override
+     here never actually won, regardless of it being declared later. <main>
+     stayed shifted 220px right on every screen ≤900px, squeezed into
+     whatever width was left (as little as ~140px on a 360px phone). That's
+     what pushed the "All Collections" heading and everything else in
+     <main> past the right edge. Matching the selector's specificity here
+     is the actual fix — the sidebar-drawer behavior itself is unchanged. */
+  body.has-sidebar main,
   main{ margin-left: 0; }
 
   /* FIX 2: THE ALIGNMENT BUG.
