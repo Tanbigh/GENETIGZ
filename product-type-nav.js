@@ -24,6 +24,28 @@
   var state = { category: 'all' };
   var productsById = {};
 
+  // Display labels for the "Coming Soon" panel's small heading.
+  // Nothing else about the filtering logic depends on this list —
+  // it only controls how a type's name is *displayed* when that
+  // type currently has zero products. A type with no entry here
+  // still works fine; its slug is just title-cased as a fallback.
+  var TYPE_LABELS = {
+    'all': 'All',
+    'oversized': 'Oversized',
+    't-shirt': 'T-Shirt',
+    'regular': 'Regular',
+    'polo': 'Polo',
+    'tank-top': 'Tank Top'
+  };
+
+  function typeLabel(key) {
+    if (TYPE_LABELS[key]) return TYPE_LABELS[key];
+    return String(key)
+      .split('-')
+      .map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); })
+      .join(' ');
+  }
+
   function slugify(str) {
     return String(str).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   }
@@ -70,14 +92,46 @@
     return slugify(product.productType || '') === state.category;
   }
 
+  // Renders one of two states into the grid when nothing is visible:
+  //  - a Product Type filter is active (Regular/Polo/Tank Top today,
+  //    but works for any future type) and it matches zero products
+  //    anywhere in the catalog → a branded "Coming Soon" panel, named
+  //    after that type.
+  //  - otherwise (shouldn't normally happen here, since filtering is
+  //    skipped entirely for "all") → a plain fallback message.
+  // Purely data-driven: as soon as a type has real products, this
+  // function stops being called for it (applyFilter finds a visible
+  // card and calls removeEmptyMessage instead).
   function ensureEmptyMessage(container) {
     var msg = container.querySelector(':scope > .filters-empty-message');
-    if (!msg) {
-      msg = document.createElement('div');
-      msg.className = 'filters-empty-message';
+    if (msg) return;
+
+    msg = document.createElement('div');
+    msg.className = 'filters-empty-message';
+
+    if (state.category !== 'all') {
+      msg.classList.add('type-coming-soon');
+
+      var eyebrow = document.createElement('p');
+      eyebrow.className = 'type-coming-soon-eyebrow';
+      eyebrow.textContent = typeLabel(state.category);
+
+      var title = document.createElement('h3');
+      title.className = 'type-coming-soon-title';
+      title.textContent = 'Coming Soon';
+
+      var sub = document.createElement('p');
+      sub.className = 'type-coming-soon-sub';
+      sub.textContent = 'Products from this collection will be available soon.';
+
+      msg.appendChild(eyebrow);
+      msg.appendChild(title);
+      msg.appendChild(sub);
+    } else {
       msg.textContent = 'No products found matching the selected filter.';
-      container.appendChild(msg);
     }
+
+    container.appendChild(msg);
   }
 
   function removeEmptyMessage(container) {

@@ -340,10 +340,55 @@
 .product-card.is-filtered-out{ display: none !important; }
 
 .filters-empty-message{
+  grid-column: 1 / -1;
   font-family: var(--font-mono);
   font-size: 12.5px;
   letter-spacing: .04em;
   color: var(--muted);
   padding: 40px 0;
   text-align: center;
+}
+
+/* ==============================================================
+   TYPE NAV — "Coming Soon" state
+   Shown inside #collectionsGalleryGrid whenever a Product Type
+   filter (Regular / Polo / Tank Top, or any future type) matches
+   zero products anywhere in the catalog. Fully dynamic — nothing
+   here is tied to a specific type name; see product-type-nav.js's
+   ensureEmptyMessage(). The moment real products with that
+   productType are added to any data/<slug>.js file, this block
+   stops rendering and the real product cards take its place
+   automatically. Reuses the same grid cell (.filters-empty-message
+   already spans the full grid width) and the same type scale as
+   the rest of the page — just laid out as a small centered panel.
+============================================================== */
+.type-coming-soon{
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 64px 20px;
+}
+.type-coming-soon-eyebrow{
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 14px;
+}
+.type-coming-soon-title{
+  font-family: var(--font-structural);
+  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.type-coming-soon-sub{
+  font-family: var(--font-structural);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+@media (max-width: 560px){
+  .type-coming-soon{ padding: 48px 16px; }
 }
