@@ -111,6 +111,7 @@
     <div class="type-nav-inner">
       <a href="collection.html" class="type-nav-link" data-type="all">All</a>
       <a href="collection.html?type=oversized" class="type-nav-link" data-type="oversized">Oversized</a>
+      <a href="collection.html?type=t-shirt" class="type-nav-link" data-type="t-shirt">T-Shirt</a>
       <a href="collection.html?type=regular" class="type-nav-link" data-type="regular">Regular</a>
       <a href="collection.html?type=polo" class="type-nav-link" data-type="polo">Polo</a>
       <a href="collection.html?type=tank-top" class="type-nav-link" data-type="tank-top">Tank Top</a>
@@ -255,14 +256,6 @@
   'use strict';
 
   var ALL_SLUG = 'all';
-  // "T-Shirt" isn't a real collection with its own data/<slug>.js file —
-  // it's a standing view over every product already loaded from the
-  // existing collections, built fresh from allProducts() below. This is
-  // the same product source the default "All Collections" view already
-  // uses, so any product that's part of any real collection (now or
-  // added later) automatically appears here too, with zero hardcoding
-  // and zero need to edit this page again.
-  var TSHIRT_SLUG = 'tshirt';
   var state = { collections: [], bySlug: {}, active: ALL_SLUG };
 
   function getRequestedSlug() {
@@ -350,18 +343,6 @@
 
       state.collections.forEach(function (c) { state.bySlug[c.slug] = c; });
 
-      // Build the synthetic "T-Shirt" collection: every product from
-      // every real collection currently loaded, reusing the exact same
-      // allProducts() aggregate the default "All Collections" view
-      // already relies on — not a separate/hardcoded product list.
-      var tshirtCollection = {
-        slug: TSHIRT_SLUG,
-        name: 'T-Shirt',
-        description: 'Every piece currently uploaded across the catalog.',
-        products: allProducts()
-      };
-      state.bySlug[TSHIRT_SLUG] = tshirtCollection;
-
       if (window.GZ.registerCollectionProducts) window.GZ.registerCollectionProducts(state.collections);
 
       var requested = getRequestedSlug();
@@ -371,13 +352,9 @@
 
       // Persistent left #sidebar — the only collection switcher on this
       // page now. Each link reloads with a new ?slug=, which the code
-      // above already reads on every load. "T-Shirt" is added here
-      // alongside the real collections so it gets an identical sidebar
-      // entry, active-state highlighting, and mobile-close behavior via
-      // collections.js's existing (unmodified) renderPersistentSidebar —
-      // it's simply another entry in the list passed in.
+      // above already reads on every load.
       if (window.GZ.renderPersistentSidebar) {
-        window.GZ.renderPersistentSidebar([tshirtCollection].concat(state.collections), 'link');
+        window.GZ.renderPersistentSidebar(state.collections, 'link');
       }
     });
   }
